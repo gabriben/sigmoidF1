@@ -2,6 +2,31 @@ import torch
 import torch.nn as nn
 
 
+class sigmoidF1(nn.Module):
+
+    def __init__(self):
+        super(sigmoidF1, self).__init__()
+        
+
+    def forward(self, y_hat, y):
+        y_hat = torch.sigmoid(y_hat)
+
+        b = torch.tensor(S)
+        c = torch.tensor(E)
+
+        sig = 1 / (1 + tf.math.exp(b * (y_hat + c)))
+
+        tp = torch.sum(sig * y, dim=0)
+        fp = torch.sum(sig * (1 - y), dim=0)
+        fn = torch.sum((1 - sig) * y, dim=0)
+
+        sigmoid_f1 = 2*tp / (2*tp + fn + fp + 1e-16)
+        cost = 1 - sigmoid_f1
+        macroCost = torch.mean(cost)
+
+        return macroCost
+
+
 class AsymmetricLoss(nn.Module):
     def __init__(self, gamma_neg=4, gamma_pos=1, clip=0.05, eps=1e-8, disable_torch_grad_focal_loss=True):
         super(AsymmetricLoss, self).__init__()
