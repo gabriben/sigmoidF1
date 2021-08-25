@@ -8,7 +8,7 @@ import torchvision.transforms as transforms
 from torch.optim import lr_scheduler
 from src.helper_functions.helper_functions import mAP, CocoDetection, CutoutPIL, ModelEma, add_weight_decay
 from src.models import create_model
-from src.loss_functions.losses import AsymmetricLoss
+from src.loss_functions.losses import AsymmetricLoss, sigmoidF1
 from randaugment import RandAugment
 from torch.cuda.amp import GradScaler, autocast
 
