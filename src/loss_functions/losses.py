@@ -9,6 +9,10 @@ class sigmoidF1(nn.Module):
         
 
     def forward(self, y_hat, y):
+
+        S = -1
+        E = 0
+        
         y_hat = torch.sigmoid(y_hat)
 
         b = torch.tensor(S)
