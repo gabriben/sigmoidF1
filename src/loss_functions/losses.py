@@ -18,7 +18,7 @@ class sigmoidF1(nn.Module):
         b = torch.tensor(S)
         c = torch.tensor(E)
 
-        sig = 1 / (1 + tf.math.exp(b * (y_hat + c)))
+        sig = 1 / (1 + torch.exp(b * (y_hat + c)))
 
         tp = torch.sum(sig * y, dim=0)
         fp = torch.sum(sig * (1 - y), dim=0)
