@@ -11,6 +11,12 @@ from src.models import create_model
 from src.loss_functions.losses import AsymmetricLoss, sigmoidF1
 from randaugment import RandAugment
 from torch.cuda.amp import GradScaler, autocast
+import numpy
+
+#mlflow
+import mlflow
+import mlflow.pytorch
+mlflow.set_experiment("/Users/gabriel.benedict@rtl.nl/multilabel/PASCAL-VOC/ASL run")
 
 parser = argparse.ArgumentParser(description='PyTorch MS_COCO Training')
 parser.add_argument('data', metavar='DIR', help='path to dataset', default='/home/MSCOCO_2014/')
@@ -28,12 +34,27 @@ parser.add_argument('-b', '--batch-size', default=128, type=int,
                     metavar='N', help='mini-batch size (default: 16)')
 parser.add_argument('--print-freq', '-p', default=64, type=int,
                     metavar='N', help='print frequency (default: 64)')
+parser.add_argument('--num-epochs', '-e', default=80, type=int,
+                    metavar='N', help='number of epochs (default: 80)')
+parser.add_argument('--stop-epoch', '-se', default=40, type=int,
+                    metavar='N', help='? stop epoch ? (default: 40)')
+parser.add_argument('--weight-decay', '-wd', default=1e-4, type=int,
+                    metavar='N', help='weight decay (default: 1e-4)')
+parser.add_argument('--loss-function', '-lo', default="ASL", type=str,
+                    metavar='N', help='loss function a.k.a criterion (default: ASL)')
 
 
 def main():
     args = parser.parse_args()
     args.do_bottleneck_head = False
 
+    #mlflow
+    with mlflow.start_run() as run:  
+    # Log our parameters into mlflow
+      for key, value in vars(args).items():
+          mlflow.log_param(key, value)
+
+    
     # Setup model
     print('creating model...')
     model = create_model(args).cuda()
@@ -80,22 +101,28 @@ def main():
         num_workers=args.workers, pin_memory=False)
 
     # Actuall Training
-    train_multi_label_coco(model, train_loader, val_loader, args.lr)
+    train_multi_label_coco(model, train_loader, val_loader, args)
 
 
-def train_multi_label_coco(model, train_loader, val_loader, lr):
+def train_multi_label_coco(model, train_loader, val_loader, args):
+
     ema = ModelEma(model, 0.9997)  # 0.9997^641=0.82
 
     # set optimizer
-    Epochs = 80
-    Stop_epoch = 40
-    weight_decay = 1e-4
-    criterion = AsymmetricLoss(gamma_neg=4, gamma_pos=0, clip=0.05, disable_torch_grad_focal_loss=True)
+    Epochs = args.num-epochs
+    Stop_epoch = args.stop-epochs
+    weight_decay = args.weight-decay
+    if args.loss-function == "ASL":
+        criterion = AsymmetricLoss(gamma_neg=4, gamma_pos=0, clip=0.05, disable_torch_grad_focal_loss=True)
+    elif args.loss-function == "sigmoidF1":
+        criterion = sigmoidF1()
+        
     parameters = add_weight_decay(model, weight_decay)
     optimizer = torch.optim.Adam(params=parameters, lr=lr, weight_decay=0)  # true wd, filter_bias_and_bn
     steps_per_epoch = len(train_loader)
     scheduler = lr_scheduler.OneCycleLR(optimizer, max_lr=lr, steps_per_epoch=steps_per_epoch, epochs=Epochs,
                                         pct_start=0.2)
+
 
     highest_mAP = 0
     trainInfoList = []
@@ -131,8 +158,10 @@ def train_multi_label_coco(model, train_loader, val_loader, lr):
                               loss.item()))
 
         try:
-            torch.save(model.state_dict(), os.path.join(
-                'models/', 'model-{}-{}.ckpt'.format(epoch + 1, i + 1)))
+            p = os.path.join(
+                'models/', 'model-{}-{}.ckpt'.format(epoch + 1, i + 1))
+            torch.save(model.state_dict(), p)
+            mlflow.log_artifact(p)
         except:
             pass
 
@@ -147,6 +176,12 @@ def train_multi_label_coco(model, train_loader, val_loader, lr):
             except:
                 pass
         print('current_mAP = {:.2f}, highest_mAP = {:.2f}\n'.format(mAP_score, highest_mAP))
+
+        #mlflow
+        mlflow.log_metric("mAP", highest_mAP)
+        gpus = tf.config.list_physical_devices('GPU')
+        mlflow.log_metric(key="nGPUs", value=len(gpus))
+        mlflow.end_run()
 
 
 def validate_multi(val_loader, model, ema_model):
