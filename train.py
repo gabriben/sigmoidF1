@@ -86,23 +86,23 @@ class Map(dict):
         del self.__dict__[key]
 
 def main(ep = 1, loss = "ASL"):
-    try: # run from shell with arguments
-      args = parser.parse_args()
-      args.do_bottleneck_head = False
-      #mlflow
-      for key, value in vars(args).items():
-          mlflow.log_param(key, value)
+    # try: # run from shell with arguments
+    #   args = parser.parse_args()
+    #   args.do_bottleneck_head = False
+    #   #mlflow
+    #   for key, value in vars(args).items():
+    #       mlflow.log_param(key, value)
 
         
-    except Exception as e: #run as import from python
-      args = get_argparse_defaults(parser)
-      args = Map(args)
-      args.num_epochs = ep
-      args.loss_function = loss
+    # except Exception as e: #run as import from python
+    args = get_argparse_defaults(parser)
+    args = Map(args)
+    args.num_epochs = ep
+    args.loss_function = loss
 
       #mlflow
-      for key, value in args.items(): #vars(args).items()
-          mlflow.log_param(key, value)
+    for key, value in args.items(): #vars(args).items()
+        mlflow.log_param(key, value)
 
     
     # Setup model
