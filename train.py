@@ -43,7 +43,7 @@ parser.add_argument('--weight-decay', '-wd', default=1e-4, type=int,
 parser.add_argument('--loss-function', '-lo', default="ASL", type=str,
                     metavar='N', help='loss function a.k.a criterion (default: ASL)')
 
-
+#https://stackoverflow.com/questions/44542605/python-how-to-get-all-default-values-from-argparse/44543594#:~:text=def%20get_argparse_defaults(parser)%3A%0A%20%20%20%20defaults%20%3D%20%7B%7D%0A%20%20%20%20for%20action%20in%20parser._actions%3A%0A%20%20%20%20%20%20%20%20if%20not%20action.required%20and%20action.dest%20!%3D%20%22help%22%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20defaults%5Baction.dest%5D%20%3D%20action.default%0A%20%20%20%20return%20defaults
 def get_argparse_defaults(parser):
     defaults = {}
     for action in parser._actions:
@@ -51,16 +51,53 @@ def get_argparse_defaults(parser):
             defaults[action.dest] = action.default
     return defaults
 
+#https://stackoverflow.com/questions/2352181/how-to-use-a-dot-to-access-members-of-dictionary#:~:text=to%20help%20you%3A-,class,-Map(dict)%3A%0A%20%20%20%20%22%22%22%0A%20%20%20%20Example
+
+
+class Map(dict):
+    """
+    Example:
+    m = Map({'first_name': 'Eduardo'}, last_name='Pool', age=24, sports=['Soccer'])
+    """
+    def __init__(self, *args, **kwargs):
+        super(Map, self).__init__(*args, **kwargs)
+        for arg in args:
+            if isinstance(arg, dict):
+                for k, v in arg.iteritems():
+                    self[k] = v
+
+        if kwargs:
+            for k, v in kwargs.iteritems():
+                self[k] = v
+
+    def __getattr__(self, attr):
+        return self.get(attr)
+
+    def __setattr__(self, key, value):
+        self.__setitem__(key, value)
+
+    def __setitem__(self, key, value):
+        super(Map, self).__setitem__(key, value)
+        self.__dict__.update({key: value})
+
+    def __delattr__(self, item):
+        self.__delitem__(item)
+
+    def __delitem__(self, key):
+        super(Map, self).__delitem__(key)
+        del self.__dict__[key]
+
 def main():
     # args = parser.parse_args()
     # args.do_bottleneck_head = False
 
     args = get_argparse_defaults(parser)
+    args = Map(args)
 
     # #mlflow
     # with mlflow.start_run() as run:  
     # # Log our parameters into mlflow
-    for key, value in vars(args).items():
+    for key, value in args.items(): #vars(args).items()
         mlflow.log_param(key, value)
 
     
