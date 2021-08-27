@@ -230,8 +230,6 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
 
         #mlflow
         mlflow.log_metric("mAP", highest_mAP)
-        gpus = tf.config.list_physical_devices('GPU')
-        mlflow.log_metric(key="nGPUs", value=len(gpus))
         mlflow.end_run()
 
 
