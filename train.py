@@ -114,7 +114,7 @@ def main():
     instances_path_train = os.path.join(args.data, 'annotations/instances_train2014.json')
     # data_path_val = args.data
     # data_path_train = args.data
-    data_path_val   = f'{args.data}/val2014'    # args.data
+    data_path_val = f'{args.data}/val2014'    # args.data
     data_path_train = f'{args.data}/train2014'  # args.data
     val_dataset = CocoDetection(data_path_val,
                                 instances_path_val,
@@ -154,7 +154,7 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
 
     # set optimizer
     Epochs = args.num_epochs
-    Stop_epoch = args.stop_epochs
+    Stop_epoch = args.stop_epoch
     weight_decay = args.weight_decay
     lr = args.lr
     if args.loss_function == "ASL":
