@@ -1,3 +1,4 @@
+import numpy
 import os
 import argparse
 import torch
@@ -11,7 +12,6 @@ from src.models import create_model
 from src.loss_functions.losses import AsymmetricLoss, sigmoidF1
 from randaugment import RandAugment
 from torch.cuda.amp import GradScaler, autocast
-import numpy
 
 #mlflow
 import mlflow
