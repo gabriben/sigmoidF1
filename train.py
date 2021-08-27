@@ -228,9 +228,9 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
                 pass
         print('current_mAP = {:.2f}, highest_mAP = {:.2f}\n'.format(mAP_score, highest_mAP))
 
-        #mlflow
-        mlflow.log_metric("mAP", highest_mAP)
-        mlflow.end_run()
+    #mlflow
+    mlflow.log_metric("mAP", highest_mAP)
+    mlflow.end_run()
 
 
 def validate_multi(val_loader, model, ema_model):
