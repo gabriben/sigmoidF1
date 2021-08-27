@@ -44,9 +44,18 @@ parser.add_argument('--loss-function', '-lo', default="ASL", type=str,
                     metavar='N', help='loss function a.k.a criterion (default: ASL)')
 
 
+def get_argparse_defaults(parser):
+    defaults = {}
+    for action in parser._actions:
+        if not action.required and action.dest != "help":
+            defaults[action.dest] = action.default
+    return defaults
+
 def main():
-    args = parser.parse_args()
-    args.do_bottleneck_head = False
+    # args = parser.parse_args()
+    # args.do_bottleneck_head = False
+
+    get_argparse_defaults(parser)
 
     # #mlflow
     # with mlflow.start_run() as run:  
