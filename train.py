@@ -34,8 +34,8 @@ parser.add_argument('-b', '--batch-size', default=128, type=int,
                     metavar='N', help='mini-batch size (default: 16)')
 parser.add_argument('--print-freq', '-p', default=64, type=int,
                     metavar='N', help='print frequency (default: 64)')
-parser.add_argument('--num-epochs', '-e', default=80, type=int,
-                    metavar='N', help='number of epochs (default: 80)')
+parser.add_argument('--num-epochs', '-e', default=1, type=int,
+                    metavar='N', help='number of epochs (default: 1)')
 parser.add_argument('--stop-epoch', '-se', default=40, type=int,
                     metavar='N', help='? stop epoch ? (default: 40)')
 parser.add_argument('--weight-decay', '-wd', default=1e-4, type=int,
@@ -85,18 +85,24 @@ class Map(dict):
         super(Map, self).__delitem__(key)
         del self.__dict__[key]
 
-def main():
-    # args = parser.parse_args()
-    # args.do_bottleneck_head = False
+def main(ep = 1, loss = "ASL"):
+    try: # run from shell with arguments
+      args = parser.parse_args()
+      args.do_bottleneck_head = False
+      #mlflow
+      for key, value in vars(args).items():
+          mlflow.log_param(key, value)
 
-    args = get_argparse_defaults(parser)
-    args = Map(args)
+        
+    except: #run as import from python
+      args = get_argparse_defaults(parser)
+      args = Map(args)
+      args.num_epochs = ep
+      args.loss_function = loss
 
-    # #mlflow
-    # with mlflow.start_run() as run:  
-    # # Log our parameters into mlflow
-    for key, value in args.items(): #vars(args).items()
-        mlflow.log_param(key, value)
+      #mlflow
+      for key, value in args.items(): #vars(args).items()
+          mlflow.log_param(key, value)
 
     
     # Setup model
