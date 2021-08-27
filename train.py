@@ -153,12 +153,12 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
     ema = ModelEma(model, 0.9997)  # 0.9997^641=0.82
 
     # set optimizer
-    Epochs = args.num-epochs
-    Stop_epoch = args.stop-epochs
-    weight_decay = args.weight-decay
-    if args.loss-function == "ASL":
+    Epochs = args.num_epochs
+    Stop_epoch = args.stop_epochs
+    weight_decay = args.weight_decay
+    if args.loss_function == "ASL":
         criterion = AsymmetricLoss(gamma_neg=4, gamma_pos=0, clip=0.05, disable_torch_grad_focal_loss=True)
-    elif args.loss-function == "sigmoidF1":
+    elif args.loss_function == "sigmoidF1":
         criterion = sigmoidF1()
         
     parameters = add_weight_decay(model, weight_decay)
