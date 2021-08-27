@@ -55,7 +55,7 @@ def main():
     # args = parser.parse_args()
     # args.do_bottleneck_head = False
 
-    get_argparse_defaults(parser)
+    args = get_argparse_defaults(parser)
 
     # #mlflow
     # with mlflow.start_run() as run:  
