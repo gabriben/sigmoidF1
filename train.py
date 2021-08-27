@@ -94,7 +94,7 @@ def main(ep = 1, loss = "ASL"):
           mlflow.log_param(key, value)
 
         
-    except Exception as e:: #run as import from python
+    except Exception as e: #run as import from python
       args = get_argparse_defaults(parser)
       args = Map(args)
       args.num_epochs = ep
