@@ -48,11 +48,11 @@ def main():
     args = parser.parse_args()
     args.do_bottleneck_head = False
 
-    #mlflow
-    with mlflow.start_run() as run:  
-    # Log our parameters into mlflow
-      for key, value in vars(args).items():
-          mlflow.log_param(key, value)
+    # #mlflow
+    # with mlflow.start_run() as run:  
+    # # Log our parameters into mlflow
+    for key, value in vars(args).items():
+        mlflow.log_param(key, value)
 
     
     # Setup model
