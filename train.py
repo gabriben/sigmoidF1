@@ -52,8 +52,6 @@ def get_argparse_defaults(parser):
     return defaults
 
 #https://stackoverflow.com/questions/2352181/how-to-use-a-dot-to-access-members-of-dictionary#:~:text=to%20help%20you%3A-,class,-Map(dict)%3A%0A%20%20%20%20%22%22%22%0A%20%20%20%20Example
-
-
 class Map(dict):
     """
     Example:
@@ -63,11 +61,11 @@ class Map(dict):
         super(Map, self).__init__(*args, **kwargs)
         for arg in args:
             if isinstance(arg, dict):
-                for k, v in arg.iteritems():
+                for k, v in arg.items():
                     self[k] = v
 
         if kwargs:
-            for k, v in kwargs.iteritems():
+            for k, v in kwargs.items():
                 self[k] = v
 
     def __getattr__(self, attr):
