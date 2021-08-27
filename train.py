@@ -19,10 +19,10 @@ import mlflow.pytorch
 mlflow.set_experiment("/Users/gabriel.benedict@rtl.nl/multilabel/PASCAL-VOC/ASL run")
 
 parser = argparse.ArgumentParser(description='PyTorch MS_COCO Training')
-parser.add_argument('data', metavar='DIR', help='path to dataset', default='/home/MSCOCO_2014/')
+parser.add_argument('data', metavar='DIR', help='path to dataset', default='/dbfs/datasets/coco')
 parser.add_argument('--lr', default=1e-4, type=float)
 parser.add_argument('--model-name', default='tresnet_m')
-parser.add_argument('--model-path', default='./tresnet_m.pth', type=str)
+parser.add_argument('--model-path', default='/dbfs/models/tresnet_m.pth', type=str)
 parser.add_argument('--num-classes', default=80)
 parser.add_argument('-j', '--workers', default=8, type=int, metavar='N',
                     help='number of data loading workers (default: 16)')
