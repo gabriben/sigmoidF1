@@ -7,6 +7,7 @@ import torch.optim
 import torch.utils.data.distributed
 import torchvision.transforms as transforms
 from torch.optim import lr_scheduler
+import tensorflow as tf
 from src.helper_functions.helper_functions import mAP, CocoDetection, CutoutPIL, ModelEma, add_weight_decay
 from src.models import create_model
 from src.loss_functions.losses import AsymmetricLoss, sigmoidF1
@@ -160,6 +161,14 @@ def main(ep = 1, loss = "ASL"):
 
 def train_multi_label_coco(model, train_loader, val_loader, args):
 
+
+    #mlflow
+    sess = tf.InteractiveSession()
+
+    output_dir = tempfile.mkdtemp()
+    print("Writing TensorFlow events locally to %s\n" % output_dir)
+    writer = tf.summary.FileWriter(output_dir, graph=sess.graph) 
+    
     ema = ModelEma(model, 0.9997)  # 0.9997^641=0.82
 
     # set optimizer
@@ -236,6 +245,8 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
 
     #mlflow
     mlflow.log_metric("mAP", highest_mAP)
+    print("Uploading TensorFlow events as a run artifact.")
+    mlflow.log_artifacts(output_dir, artifact_path="events")
     mlflow.end_run()
 
 
