@@ -42,6 +42,10 @@ parser.add_argument('--weight-decay', '-wd', default=1e-4, type=int,
                     metavar='N', help='weight decay (default: 1e-4)')
 parser.add_argument('--loss-function', '-lo', default="ASL", type=str,
                     metavar='N', help='loss function a.k.a criterion (default: ASL)')
+parser.add_argument('--slope', '-s', default=-1, type=float,
+                    metavar='N', help='Slope of the sigmoid function loss')
+parser.add_argument('--offset', '-off', default=0, type=float,
+                    metavar='N', help='offset of the sigmoid function loss')
 
 #https://stackoverflow.com/questions/44542605/python-how-to-get-all-default-values-from-argparse/44543594#:~:text=def%20get_argparse_defaults(parser)%3A%0A%20%20%20%20defaults%20%3D%20%7B%7D%0A%20%20%20%20for%20action%20in%20parser._actions%3A%0A%20%20%20%20%20%20%20%20if%20not%20action.required%20and%20action.dest%20!%3D%20%22help%22%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20defaults%5Baction.dest%5D%20%3D%20action.default%0A%20%20%20%20return%20defaults
 def get_argparse_defaults(parser):
@@ -163,10 +167,12 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
     Stop_epoch = args.stop_epoch
     weight_decay = args.weight_decay
     lr = args.lr
+    S = args.S
+    E = args.E
     if args.loss_function == "ASL":
         criterion = AsymmetricLoss(gamma_neg=4, gamma_pos=0, clip=0.05, disable_torch_grad_focal_loss=True)
     elif args.loss_function == "sigmoidF1":
-        criterion = sigmoidF1()
+        criterion = sigmoidF1(S = -1, E = 0)
         
     parameters = add_weight_decay(model, weight_decay)
     optimizer = torch.optim.Adam(params=parameters, lr=lr, weight_decay=0)  # true wd, filter_bias_and_bn

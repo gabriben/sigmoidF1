@@ -4,19 +4,17 @@ import torch.nn as nn
 
 class sigmoidF1(nn.Module):
 
-    def __init__(self):
+    def __init__(self, S = -1, E = 0):
         super(sigmoidF1, self).__init__()
-        
+        self.S = S
+        self.E = E
 
     def forward(self, y_hat, y):
-
-        S = -1
-        E = 0
         
         y_hat = torch.sigmoid(y_hat)
 
-        b = torch.tensor(S)
-        c = torch.tensor(E)
+        b = torch.tensor(self.S)
+        c = torch.tensor(self.E)
 
         sig = 1 / (1 + torch.exp(b * (y_hat + c)))
 
