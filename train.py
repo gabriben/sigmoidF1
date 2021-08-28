@@ -163,7 +163,7 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
 
 
     #mlflow
-    sess = tf.InteractiveSession()
+    sess = tf.compat.v1.InteractiveSession()
 
     output_dir = tempfile.mkdtemp()
     print("Writing TensorFlow events locally to %s\n" % output_dir)
