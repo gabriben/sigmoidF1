@@ -7,7 +7,6 @@ import torch.optim
 import torch.utils.data.distributed
 import torchvision.transforms as transforms
 from torch.optim import lr_scheduler
-import tensorflow as tf
 from src.helper_functions.helper_functions import mAP, CocoDetection, CutoutPIL, ModelEma, add_weight_decay
 from src.models import create_model
 from src.loss_functions.losses import AsymmetricLoss, sigmoidF1
@@ -18,6 +17,8 @@ from torch.cuda.amp import GradScaler, autocast
 import mlflow
 import mlflow.pytorch
 mlflow.set_experiment("/Users/gabriel.benedict@rtl.nl/multilabel/PASCAL-VOC/ASL run")
+import tempfile
+import tensorflow as tf
 
 parser = argparse.ArgumentParser(description='PyTorch MS_COCO Training')
 parser.add_argument('--data', help='path to dataset', default='/dbfs/datasets/coco', type=str) # , metavar='DIR'
