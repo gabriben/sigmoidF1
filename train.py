@@ -224,6 +224,8 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
                       .format(epoch, Epochs, str(i).zfill(3), str(steps_per_epoch).zfill(3),
                               scheduler.get_last_lr()[0], \
                               loss.item()))
+            if i == 50:
+                break
 
         try:
             p = os.path.join(
