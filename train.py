@@ -126,7 +126,7 @@ def main(ep = 1, loss = "ASL"):
             model.load_state_dict(filtered_dict, strict=False)
     print('done\n')
 
-    os.mkdir("models")
+    os.mkdir("models", exist_ok=True)
 
     # COCO Data loading
     instances_path_val = os.path.join(args.data, 'annotations/instances_val2014.json')
