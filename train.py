@@ -19,6 +19,7 @@ import mlflow.pytorch
 mlflow.set_experiment("/Users/gabriel.benedict@rtl.nl/multilabel/PASCAL-VOC/ASL run")
 import tempfile
 import tensorflow as tf
+import pytorch_lightning
 
 parser = argparse.ArgumentParser(description='PyTorch MS_COCO Training')
 parser.add_argument('--data', help='path to dataset', default='/dbfs/datasets/coco', type=str) # , metavar='DIR'
@@ -168,7 +169,6 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
     # output_dir = tempfile.mkdtemp()
     # print("Writing TensorFlow events locally to %s\n" % output_dir)
     # writer = tf.summary.create_file_writer(output_dir, graph=sess.graph)
-
     mlflow.pytorch.autolog()
     
     ema = ModelEma(model, 0.9997)  # 0.9997^641=0.82
@@ -248,7 +248,7 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
     #mlflow
     mlflow.log_metric("mAP", highest_mAP)
     print("Uploading TensorFlow events as a run artifact.")
-    mlflow.log_artifacts(output_dir, artifact_path="events")
+    #mlflow.log_artifacts(output_dir, artifact_path="events")
     mlflow.end_run()
 
 
