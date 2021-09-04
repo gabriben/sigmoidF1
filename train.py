@@ -92,7 +92,7 @@ class Map(dict):
         super(Map, self).__delitem__(key)
         del self.__dict__[key]
 
-def main(ep = 1, loss = "ASL"):
+def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco'):
     # try: # run from shell with arguments
     #   args = parser.parse_args()
     #   args.do_bottleneck_head = False
@@ -128,13 +128,22 @@ def main(ep = 1, loss = "ASL"):
 
     os.makedirs("models", exist_ok=True)
 
-    # COCO Data loading
-    instances_path_val = os.path.join(args.data, 'annotations/instances_val2014.json')
-    instances_path_train = os.path.join(args.data, 'annotations/instances_train2014.json')
-    # data_path_val = args.data
-    # data_path_train = args.data
-    data_path_val = f'{args.data}/val2014'    # args.data
-    data_path_train = f'{args.data}/train2014'  # args.data
+    if "coco" in data:
+        # COCO Data loading
+        instances_path_val = os.path.join(args.data, 'annotations/instances_val2014.json')
+        instances_path_train = os.path.join(args.data, 'annotations/instances_train2014.json')
+        # data_path_val = args.data
+        # data_path_train = args.data
+        data_path_val = f'{args.data}/val2014'    # args.data
+        data_path_train = f'{args.data}/train2014'  # args.data        
+    elif "PASCAL" in data:
+        # /dbfs/datasets/PASCAL-VOC
+        
+        instances_path_val = os.path.join(args.data, 'VOCasCOCO/annotations_trainval.json')
+        instances_path_train = os.path.join(args.data, 'VOCasCOCO/annotations_test.json')
+        data_path_val = f'{args.data}/VOCdevkit-test/VOC2007/JPEGImages'    # args.data
+        data_path_train = f'{args.data}/VOCdevkit/VOC2007/JPEGImages'  # args.data        
+    
     val_dataset = CocoDetection(data_path_val,
                                 instances_path_val,
                                 transforms.Compose([
