@@ -106,6 +106,7 @@ def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco'):
     args = Map(args)
     args.num_epochs = ep
     args.loss_function = loss
+    args.data = data
 
       #mlflow
     for key, value in args.items(): #vars(args).items()
