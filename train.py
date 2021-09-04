@@ -140,8 +140,8 @@ def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco'):
     elif "PASCAL" in data:
         # /dbfs/datasets/PASCAL-VOC
         
-        instances_path_val = os.path.join(args.data, 'VOCasCOCO/annotations_trainval.json')
-        instances_path_train = os.path.join(args.data, 'VOCasCOCO/annotations_test.json')
+        instances_path_val = os.path.join(args.data, 'VOCasCOCO/annotations_test.json')
+        instances_path_train = os.path.join(args.data, 'VOCasCOCO/annotations_trainval.json')
         data_path_val = f'{args.data}/VOCdevkit-test/VOC2007/JPEGImages'    # args.data
         data_path_train = f'{args.data}/VOCdevkit/VOC2007/JPEGImages'  # args.data        
     
@@ -215,7 +215,6 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
         if epoch > Stop_epoch:
             break
         for i, (inputData, target) in enumerate(train_loader):
-            print(i)
             inputData = inputData.cuda()
             target = target.cuda()  # (batch,3,num_classes)
             target = target.max(dim=1)[0]
