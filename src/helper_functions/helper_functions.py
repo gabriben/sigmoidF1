@@ -96,8 +96,9 @@ class AverageMeter(object):
         self.ema = self.ema * 0.99 + self.val * 0.01
 
 
-class CocoDetection(datasets.coco.CocoDetection, args):
-    def __init__(self, root, annFile, transform=None, target_transform=None):
+class CocoDetection(datasets.coco.CocoDetection):
+    def __init__(self, args, root, annFile, transform=None, target_transform=None):
+        self.args = args
         self.root = root
         self.coco = COCO(annFile)
 
@@ -115,7 +116,7 @@ class CocoDetection(datasets.coco.CocoDetection, args):
         ann_ids = coco.getAnnIds(imgIds=img_id)
         target = coco.loadAnns(ann_ids)
 
-        output = torch.zeros((3, args.num_classes), dtype=torch.long)
+        output = torch.zeros((3, self.args.num_classes), dtype=torch.long)
         for obj in target:
             if obj['area'] < 32 * 32:
                 output[0][self.cat2cat[obj['category_id']]] = 1

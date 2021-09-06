@@ -146,15 +146,16 @@ def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco', num_classes = 80):
         data_path_val = f'{args.data}/VOCdevkit-test/VOC2007/JPEGImages'    # args.data
         data_path_train = f'{args.data}/VOCdevkit/VOC2007/JPEGImages'  # args.data        
     
-    val_dataset = CocoDetection(data_path_val,
+    val_dataset = CocoDetection(args,
+                                data_path_val,
                                 instances_path_val,
                                 transforms.Compose([
                                     transforms.Resize((args.image_size, args.image_size)),
                                     transforms.ToTensor(),
                                     # normalize, # no need, toTensor does normalization
-                                ]),
-                                args)
-    train_dataset = CocoDetection(data_path_train,
+                                ]))
+    train_dataset = CocoDetection(args,
+                                  data_path_train,
                                   instances_path_train,
                                   transforms.Compose([
                                       transforms.Resize((args.image_size, args.image_size)),
@@ -162,8 +163,7 @@ def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco', num_classes = 80):
                                       RandAugment(),
                                       transforms.ToTensor(),
                                       # normalize,
-                                  ]),
-                                  args)
+                                  ]))
     print("len(val_dataset)): ", len(val_dataset))
     print("len(train_dataset)): ", len(train_dataset))
 
