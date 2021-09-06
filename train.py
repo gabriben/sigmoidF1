@@ -152,7 +152,8 @@ def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco', num_classes = 80):
                                     transforms.Resize((args.image_size, args.image_size)),
                                     transforms.ToTensor(),
                                     # normalize, # no need, toTensor does normalization
-                                ]))
+                                ]),
+                                args)
     train_dataset = CocoDetection(data_path_train,
                                   instances_path_train,
                                   transforms.Compose([
@@ -161,7 +162,8 @@ def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco', num_classes = 80):
                                       RandAugment(),
                                       transforms.ToTensor(),
                                       # normalize,
-                                  ]))
+                                  ]),
+                                  args)
     print("len(val_dataset)): ", len(val_dataset))
     print("len(train_dataset)): ", len(train_dataset))
 
