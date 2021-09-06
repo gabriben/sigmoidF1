@@ -92,7 +92,7 @@ class Map(dict):
         super(Map, self).__delitem__(key)
         del self.__dict__[key]
 
-def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco'):
+def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco', num_classes):
     # try: # run from shell with arguments
     #   args = parser.parse_args()
     #   args.do_bottleneck_head = False
@@ -107,6 +107,7 @@ def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco'):
     args.num_epochs = ep
     args.loss_function = loss
     args.data = data
+    args.num_classes = num_classes
 
       #mlflow
     for key, value in args.items(): #vars(args).items()
