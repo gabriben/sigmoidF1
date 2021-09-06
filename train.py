@@ -92,7 +92,7 @@ class Map(dict):
         super(Map, self).__delitem__(key)
         del self.__dict__[key]
 
-def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco', num_classes):
+def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco', num_classes = 80):
     # try: # run from shell with arguments
     #   args = parser.parse_args()
     #   args.do_bottleneck_head = False
