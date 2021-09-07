@@ -85,7 +85,11 @@ class Map(dict):
 
 
 def main(data = '/dbfs/datasets/coco', num_classes = 80):
-    args = parser.parse_args()
+    #args = parser.parse_args()
+
+
+    args = get_argparse_defaults(parser)
+    args = Map(args)    
     args.batch_size = args.batch_size
     args.num_classes = num_classes
 
