@@ -109,7 +109,7 @@ def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco', num_classes = 80):
     args.data = data
     args.num_classes = num_classes
 
-      #mlflow
+    #mlflow
     for key, value in args.items(): #vars(args).items()
         mlflow.log_param(key, value)
 
@@ -267,10 +267,10 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
         print('current_mAP = {:.2f}, highest_mAP = {:.2f}\n'.format(mAP_score, highest_mAP))
 
     #mlflow
-    mlflow.log_metric("mAP", highest_mAP)
-    print("Uploading TensorFlow events as a run artifact.")
+    mlflow.log_metric("mAP_val", highest_mAP)
+    #print("Uploading TensorFlow events as a run artifact.")
     #mlflow.log_artifacts(output_dir, artifact_path="events")
-    mlflow.end_run()
+    
 
 
 def validate_multi(val_loader, model, ema_model):
