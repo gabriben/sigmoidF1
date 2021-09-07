@@ -26,7 +26,7 @@ import pytorch_lightning
 
 parser = argparse.ArgumentParser(description='PyTorch ImageNet Training')
 parser.add_argument('data', metavar='DIR', help='path to dataset')
-parser.add_argument('--model-name', default='tresnet_l')
+parser.add_argument('--model-name', default='tresnet_m')
 parser.add_argument('--model-path', default='models/model-highest.ckpt', type=str)
 parser.add_argument('--num-classes', default=80)
 parser.add_argument('-j', '--workers', default=8, type=int, metavar='N',
