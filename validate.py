@@ -220,7 +220,7 @@ def validate_multi(val_loader, model, args):
     mAP_score = mAP(torch.cat(targets).numpy(), torch.cat(preds).numpy())
     print("mAP score:", mAP_score)
     #mlflow
-    mlflow.log_metric("mAP_test", highest_mAP)
+    mlflow.log_metric("mAP_test", mAP_score)
 
     return
 
