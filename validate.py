@@ -84,7 +84,7 @@ class Map(dict):
 
 
 
-def main(data = '/dbfs/datasets/coco', num_classes = 80):
+def main(data = '/dbfs/datasets/coco/', num_classes = 80):
     #args = parser.parse_args()
 
 
@@ -92,6 +92,7 @@ def main(data = '/dbfs/datasets/coco', num_classes = 80):
     args = Map(args)    
     args.batch_size = args.batch_size
     args.num_classes = num_classes
+    args.data = data
 
     # setup model
     print('creating and loading the model...')
@@ -113,8 +114,8 @@ def main(data = '/dbfs/datasets/coco', num_classes = 80):
         data_path = os.path.join(args.data, 'val2014')
     elif "PASCAL" in data:
         # /dbfs/datasets/PASCAL-VOC
-        instances_path = os.path.join(args.data, '/VOCasCOCO/annotations_test.json')
-        data_path = f'{args.data}/VOCdevkit-test/VOC2007/JPEGImages'
+        instances_path = os.path.join(args.data, 'VOCasCOCO/annotations_test.json')
+        data_path = f'{args.data}VOCdevkit-test/VOC2007/JPEGImages'
         
     val_dataset = CocoDetection(args,
                                 data_path,
