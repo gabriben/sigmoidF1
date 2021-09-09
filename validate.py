@@ -113,7 +113,7 @@ def main(data = '/dbfs/datasets/coco', num_classes = 80):
         data_path = os.path.join(args.data, 'val2014')
     elif "PASCAL" in data:
         # /dbfs/datasets/PASCAL-VOC
-        instances_path = os.path.join(args.data, 'VOCasCOCO/annotations_test.json')
+        instances_path = os.path.join(args.data, '/VOCasCOCO/annotations_test.json')
         data_path = f'{args.data}/VOCdevkit-test/VOC2007/JPEGImages'
         
     val_dataset = CocoDetection(args,
