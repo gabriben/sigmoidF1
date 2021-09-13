@@ -145,7 +145,7 @@ def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco', num_classes = 80, E
         
         instances_path_val = os.path.join(args.data, 'VOCasCOCO/annotations_val.json')
         instances_path_train = os.path.join(args.data, 'VOCasCOCO/annotations_train.json')
-        data_path_val = f'{args.data}/VOC2007/VOC2007/JPEGImages'    # args.data
+        data_path_val = f'{args.data}/VOCdevkit/VOC2007/JPEGImages'    # args.data
         data_path_train = f'{args.data}/VOCdevkit/VOC2007/JPEGImages'  # args.data        
     
     val_dataset = CocoDetection(args,
