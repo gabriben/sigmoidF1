@@ -39,7 +39,7 @@ parser.add_argument('--print-freq', '-p', default=64, type=int,
                     metavar='N', help='print frequency (default: 64)')
 parser.add_argument('--num-epochs', '-e', default=1, type=int,
                     metavar='N', help='number of epochs (default: 1)')
-parser.add_argument('--stop-epoch', '-se', default=40, type=int,
+parser.add_argument('--stop-epoch', '-se', default=100, type=int,
                     metavar='N', help='? stop epoch ? (default: 40)')
 parser.add_argument('--weight-decay', '-wd', default=1e-4, type=int,
                     metavar='N', help='weight decay (default: 1e-4)')
