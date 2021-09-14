@@ -119,6 +119,7 @@ def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco', num_classes = 80, E
     # Setup model
     print('creating model...')
     model = create_model(args).cuda()
+    print(model)
     if args.model_path:  # make sure to load pretrained ImageNet model
         #if "tresnet_m.pth" in args.model_path:
         #    state = torch.load(args.model_path, map_location='cpu')
