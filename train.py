@@ -94,7 +94,7 @@ class Map(dict):
 
 def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco', num_classes = 80, E = 1, S = -9):
     # try: # run from shell with arguments
-    #   args = parser.parse_args()
+    #   args = parsxer.parse_args()
     #   args.do_bottleneck_head = False
     #   #mlflow
     #   for key, value in vars(args).items():
@@ -111,6 +111,7 @@ def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco', num_classes = 80, E
     args.S = S
     args.E = E
     args.do_bottleneck_head = False
+    print(args)
 
     #mlflow
     for key, value in args.items(): #vars(args).items()
