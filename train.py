@@ -110,6 +110,7 @@ def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco', num_classes = 80, E
     args.num_classes = num_classes
     args.S = S
     args.E = E
+    args.do_bottleneck_head = False
 
     #mlflow
     for key, value in args.items(): #vars(args).items()
