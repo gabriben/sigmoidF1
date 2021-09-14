@@ -120,14 +120,14 @@ def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco', num_classes = 80, E
     print('creating model...')
     model = create_model(args).cuda()
     if args.model_path:  # make sure to load pretrained ImageNet model
-        if "tresnet_m.pth" in args.model_path:
-            state = torch.load(args.model_path, map_location='cpu')
-            model.load_state_dict(state, strict=False)
-        else:
-            state = torch.load(args.model_path, map_location='cpu')
-            filtered_dict = {k: v for k, v in state['model'].items() if
-                             (k in model.state_dict() and 'head.fc' not in k)}
-            model.load_state_dict(filtered_dict, strict=False)
+        #if "tresnet_m.pth" in args.model_path:
+        #    state = torch.load(args.model_path, map_location='cpu')
+        #    model.load_state_dict(state, strict=False)
+        #else:
+        state = torch.load(args.model_path, map_location='cpu')
+        filtered_dict = {k: v for k, v in state['model'].items() if
+                         (k in model.state_dict() and 'head.fc' not in k)}
+        model.load_state_dict(filtered_dict, strict=False)
     print('done\n')
 
     os.makedirs("models", exist_ok=True)
