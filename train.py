@@ -25,7 +25,7 @@ parser = argparse.ArgumentParser(description='PyTorch MS_COCO Training')
 parser.add_argument('--data', help='path to dataset', default='/dbfs/datasets/coco', type=str) # , metavar='DIR'
 parser.add_argument('--lr', default=1e-4, type=float)
 parser.add_argument('--model-name', default='tresnet_m')
-parser.add_argument('--model-path', default='/dbfs/models/tresnet_m.pth', type=str)
+parser.add_argument('--model-path', default='/dbfs/models/', type=str)
 parser.add_argument('--num-classes', default=80)
 parser.add_argument('-j', '--workers', default=8, type=int, metavar='N',
                     help='number of data loading workers (default: 16)')
@@ -92,7 +92,7 @@ class Map(dict):
         super(Map, self).__delitem__(key)
         del self.__dict__[key]
 
-def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco', num_classes = 80, E = 1, S = -9):
+def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 1, loss = "ASL", num_classes = 80, E = 1, S = -9):
     # try: # run from shell with arguments
     #   args = parsxer.parse_args()
     #   args.do_bottleneck_head = False
@@ -110,6 +110,7 @@ def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco', num_classes = 80, E
     args.num_classes = num_classes
     args.S = S
     args.E = E
+    args.model_path = args.model_path + model_file_name + ".pth"
     args.do_bottleneck_head = False
     print(args)
 
@@ -127,9 +128,15 @@ def main(ep = 1, loss = "ASL", data = '/dbfs/datasets/coco', num_classes = 80, E
         #    state = torch.load(args.model_path, map_location='cpu')
         #    model.load_state_dict(state, strict=False)
         #else:
-        state = torch.load(args.model_path, map_location='cpu')    
-        filtered_dict = {k: v for k, v in state['model'].items() if
+        if model_file_name == "resnet_m_1K":
+            state = torch.load(args.model_path, map_location='cpu')    
+            filtered_dict = {k: v for k, v in state['model'].items() if
                          (k in model.state_dict() and 'head.fc' not in k)}
+        elif model_file_name == "resnet_m_21K":
+            state = torch.load(args.model_path, map_location='cpu')    
+            filtered_dict = {k: v for k, v in state['state_dict'].items() if
+                         (k in model.state_dict() and 'head.fc' not in k)}
+            
         model.load_state_dict(filtered_dict, strict=False)
     print('done\n')
 
