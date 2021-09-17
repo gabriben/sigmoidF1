@@ -219,8 +219,7 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
     parameters = add_weight_decay(model, weight_decay)
     optimizer = torch.optim.Adam(params=parameters, lr=lr, weight_decay=0)  # true wd, filter_bias_and_bn
     steps_per_epoch = len(train_loader)
-    scheduler = lr_scheduler.OneCycleLR(optimizer, max_lr=lr, steps_per_epoch=steps_per_epoch, epochs=Epochs,
-                                        pct_start=0.2)
+    scheduler = lr_scheduler.OneCycleLR(optimizer, max_lr=lr, steps_per_epoch=steps_per_epoch, epochs=Epochs, pct_start=0.2)
 
 
     highest_mAP = 0
