@@ -93,6 +93,7 @@ def main(data = '/dbfs/datasets/coco/', num_classes = 80, model_name = "tresnet_
     args.batch_size = args.batch_size
     args.num_classes = num_classes
     args.model_name = model_name
+    args.data = data
 
     # setup model
     print('creating and loading the model...')
