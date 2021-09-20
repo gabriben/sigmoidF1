@@ -110,6 +110,7 @@ def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 
     args.num_classes = num_classes
     args.S = S
     args.E = E
+    args.model_name = "tresnet_l" if "_l_" in model_file_name else "tresnet_m"    
     args.model_path = args.model_path + model_file_name + ".pth"
     args.do_bottleneck_head = False
     print(args)
@@ -128,11 +129,11 @@ def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 
         #    state = torch.load(args.model_path, map_location='cpu')
         #    model.load_state_dict(state, strict=False)
         #else:
-        if model_file_name == "tresnet_m_1K":
+        if "_1K" in model_file_name:
             state = torch.load(args.model_path, map_location='cpu')    
             filtered_dict = {k: v for k, v in state['model'].items() if
                          (k in model.state_dict() and 'head.fc' not in k)}
-        elif model_file_name == "tresnet_m_21K":
+        elif "_21K" in model_file_name:
             state = torch.load(args.model_path, map_location='cpu')    
             filtered_dict = {k: v for k, v in state['state_dict'].items() if
                          (k in model.state_dict() and 'head.fc' not in k)}
