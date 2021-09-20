@@ -84,7 +84,7 @@ class Map(dict):
 
 
 
-def main(data = '/dbfs/datasets/coco/', num_classes = 80):
+def main(data = '/dbfs/datasets/coco/', num_classes = 80, model_name):
     #args = parser.parse_args()
 
 
@@ -92,7 +92,7 @@ def main(data = '/dbfs/datasets/coco/', num_classes = 80):
     args = Map(args)    
     args.batch_size = args.batch_size
     args.num_classes = num_classes
-    args.data = data
+    args.model_name = model_name
 
     # setup model
     print('creating and loading the model...')
