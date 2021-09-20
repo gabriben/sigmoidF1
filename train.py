@@ -16,16 +16,10 @@ from torch.cuda.amp import GradScaler, autocast
 #mlflow
 import mlflow
 import mlflow.pytorch
-mlflow.set_experiment("/Users/gabriel.benedict@rtl.nl/multilabel/PASCAL-VOC/ASL run Horovod")
+mlflow.set_experiment("/Users/gabriel.benedict@rtl.nl/multilabel/PASCAL-VOC/ASL run")
 import tempfile
 import tensorflow as tf
 import pytorch_lightning
-
-#horovod
-import horovod.torch as hvd
-hvd.init()
-if torch.cuda.is_available():
-    torch.cuda.set_device(hvd.local_rank())
 
 parser = argparse.ArgumentParser(description='PyTorch MS_COCO Training')
 parser.add_argument('--data', help='path to dataset', default='/dbfs/datasets/coco', type=str) # , metavar='DIR'
@@ -116,7 +110,6 @@ def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 
     args.num_classes = num_classes
     args.S = S
     args.E = E
-    args.model_name = "tresnet_l" if "_l_" in model_file_name else "tresnet_m"    
     args.model_path = args.model_path + model_file_name + ".pth"
     args.do_bottleneck_head = False
     print(args)
@@ -135,11 +128,11 @@ def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 
         #    state = torch.load(args.model_path, map_location='cpu')
         #    model.load_state_dict(state, strict=False)
         #else:
-        if "_1K" in model_file_name:
+        if model_file_name == "tresnet_m_1K":
             state = torch.load(args.model_path, map_location='cpu')    
             filtered_dict = {k: v for k, v in state['model'].items() if
                          (k in model.state_dict() and 'head.fc' not in k)}
-        elif "_21K" in model_file_name:
+        elif model_file_name == "tresnet_m_21K":
             state = torch.load(args.model_path, map_location='cpu')    
             filtered_dict = {k: v for k, v in state['state_dict'].items() if
                          (k in model.state_dict() and 'head.fc' not in k)}
@@ -186,27 +179,14 @@ def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 
     print("len(val_dataset)): ", len(val_dataset))
     print("len(train_dataset)): ", len(train_dataset))
 
-    #horovod
-    # Partition dataset among workers using DistributedSampler
-    train_sampler = torch.utils.data.distributed.DistributedSampler(
-        train_dataset, num_replicas=hvd.size(), rank=hvd.rank())
-    val_sampler = torch.utils.data.distributed.DistributedSampler(
-        val_dataset, num_replicas=hvd.size(), rank=hvd.rank())
-    
     # Pytorch Data loader
     train_loader = torch.utils.data.DataLoader(
         train_dataset, batch_size=args.batch_size, shuffle=True,
-        num_workers=args.workers, pin_memory=True,
-        #horovod
-        sampler = train_sampler
-    )
+        num_workers=args.workers, pin_memory=True)
 
     val_loader = torch.utils.data.DataLoader(
         val_dataset, batch_size=args.batch_size, shuffle=False,
-        num_workers=args.workers, pin_memory=False,
-        #horovod
-        sampler = val_sampler
-    )
+        num_workers=args.workers, pin_memory=False)
 
     # Actuall Training
     train_multi_label_coco(model, train_loader, val_loader, args)
@@ -237,24 +217,10 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
         criterion = sigmoidF1(S = S, E = E)
         
     parameters = add_weight_decay(model, weight_decay)
-
-
-    
     optimizer = torch.optim.Adam(params=parameters, lr=lr, weight_decay=0)  # true wd, filter_bias_and_bn
-
-    #horovod
-    # Add Horovod Distributed Optimizer
-    optimizer = hvd.DistributedOptimizer(optimizer, named_parameters=model.named_parameters())
-    hvd.broadcast_parameters(model.state_dict(), root_rank=0)
-    hvd.broadcast_optimizer_state(optimizer, root_rank=0)
-    # Create a callback to broadcast the initial variable states from rank 0 to all other processes.
-    # This is required to ensure consistent initialization of all workers when training is started with random weights or restored from a checkpoint.
-    callbacks = [
-        hvd.callbacks.BroadcastGlobalVariablesCallback(0),
-    ]
-    
     steps_per_epoch = len(train_loader)
-    scheduler = lr_scheduler.OneCycleLR(optimizer, max_lr=lr, steps_per_epoch=steps_per_epoch, epochs=Epochs, pct_start=0.2)
+    scheduler = lr_scheduler.OneCycleLR(optimizer, max_lr=lr, steps_per_epoch=steps_per_epoch, epochs=Epochs,
+                                        pct_start=0.2)
 
 
     highest_mAP = 0
