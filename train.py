@@ -116,7 +116,7 @@ def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 
     args.num_classes = num_classes
     args.S = S
     args.E = E
-    args.model_name = "tresnet_l" if "_l_" in model_file_name else 0    
+    args.model_name = "tresnet_l" if "_l_" in model_file_name else "tresnet_m"    
     args.model_path = args.model_path + model_file_name + ".pth"
     args.do_bottleneck_head = False
     print(args)
