@@ -84,7 +84,7 @@ class Map(dict):
 
 
 
-def main(data = '/dbfs/datasets/coco/', num_classes = 80, model_name):
+def main(data = '/dbfs/datasets/coco/', num_classes = 80, model_name = "tresnet_m"):
     #args = parser.parse_args()
 
 
