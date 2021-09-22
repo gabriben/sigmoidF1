@@ -92,7 +92,7 @@ class Map(dict):
         super(Map, self).__delitem__(key)
         del self.__dict__[key]
 
-def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 1, loss = "ASL", num_classes = 80, E = 1, S = -9):
+def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 1, loss = "ASL", num_classes = 80, E = 1, S = -9, image_size = 224):
     # try: # run from shell with arguments
     #   args = parsxer.parse_args()
     #   args.do_bottleneck_head = False
@@ -110,6 +110,7 @@ def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 
     args.num_classes = num_classes
     args.S = S
     args.E = E
+    args.image_size = image_size
     args.model_name = "tresnet_l" if "_l_" in model_file_name else "tresnet_m"    
     args.model_path = args.model_path + model_file_name + ".pth"
     args.do_bottleneck_head = False
@@ -214,101 +215,7 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
     E = args.E
     if args.loss_function == "ASL":
         criterion = AsymmetricLoss(gamma_neg=4, gamma_pos=0, clip=0.05, disable_torch_grad_focal_loss=True)
-    elif args.loss_function == "sigmoidF1":
-        criterion = sigmoidF1(S = S, E = E)
-        
-    parameters = add_weight_decay(model, weight_decay)
-    optimizer = torch.optim.Adam(params=parameters, lr=lr, weight_decay=0)  # true wd, filter_bias_and_bn
-    steps_per_epoch = len(train_loader)
-    scheduler = lr_scheduler.OneCycleLR(optimizer, max_lr=lr, steps_per_epoch=steps_per_epoch, epochs=Epochs,
-                                        pct_start=0.2)
-
-
-    highest_mAP = 0
-    trainInfoList = []
-    scaler = GradScaler()
-    for epoch in range(Epochs):
-        if epoch > Stop_epoch:
-            break
-        for i, (inputData, target) in enumerate(train_loader):
-            inputData = inputData.cuda()
-            target = target.cuda()  # (batch,3,num_classes)
-            target = target.max(dim=1)[0]
-            with autocast():  # mixed precision
-                output = model(inputData).float()  # sigmoid will be done in loss !
-            loss = criterion(output, target)
-            model.zero_grad()
-
-            scaler.scale(loss).backward()
-            # loss.backward()
-
-            scaler.step(optimizer)
-            scaler.update()
-            # optimizer.step()
-
-            scheduler.step()
-
-            ema.update(model)
-            # store information
-            if i % 100 == 0:
-                trainInfoList.append([epoch, i, loss.item()])
-                print('Epoch [{}/{}], Step [{}/{}], LR {:.1e}, Loss: {:.1f}'
-                      .format(epoch, Epochs, str(i).zfill(3), str(steps_per_epoch).zfill(3),
-                              scheduler.get_last_lr()[0], \
-                              loss.item()))
-            # if i == 50:
-            #     break
-
-        try:
-            p = os.path.join(
-                'models/', 'model-{}-{}.ckpt'.format(epoch + 1, i + 1))
-            torch.save(model.state_dict(), p)
-            mlflow.log_artifact(p)
-        except:
-            pass
-
-        model.eval()
-        mAP_score = validate_multi(val_loader, model, ema)
-        model.train()
-        if mAP_score > highest_mAP:
-            highest_mAP = mAP_score
-            try:
-                torch.save(model.state_dict(), os.path.join(
-                    'models/', 'model-highest.ckpt'))
-            except:
-                pass
-        print('current_mAP = {:.2f}, highest_mAP = {:.2f}\n'.format(mAP_score, highest_mAP))
-
-    #mlflow
-    mlflow.log_metric("mAP_val", highest_mAP)
-    #print("Uploading TensorFlow events as a run artifact.")
-    #mlflow.log_artifacts(output_dir, artifact_path="events")
-    
-
-
-def validate_multi(val_loader, model, ema_model):
-    print("starting validation")
-    Sig = torch.nn.Sigmoid()
-    preds_regular = []
-    preds_ema = []
-    targets = []
-    for i, (input, target) in enumerate(val_loader):
-        target = target
-        target = target.max(dim=1)[0]
-        # compute output
-        with torch.no_grad():
-            with autocast():
-                output_regular = Sig(model(input.cuda())).cpu()
-                output_ema = Sig(ema_model.module(input.cuda())).cpu()
-
-        # for mAP calculation
-        preds_regular.append(output_regular.cpu().detach())
-        preds_ema.append(output_ema.cpu().detach())
-        targets.append(target.cpu().detach())
-
-    mAP_score_regular = mAP(torch.cat(targets).numpy(), torch.cat(preds_regular).numpy())
-    mAP_score_ema = mAP(torch.cat(targets).numpy(), torch.cat(preds_ema).numpy())
-    print("mAP score regular {:.2f}, mAP score EMA {:.2f}".format(mAP_score_regular, mAP_score_ema))
+EMA {:.2f}".format(mAP_score_regular, mAP_score_ema))
     return max(mAP_score_regular, mAP_score_ema)
 
 
