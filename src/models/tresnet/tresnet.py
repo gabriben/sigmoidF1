@@ -15,7 +15,7 @@ class bottleneck_head(nn.Module):
         self.embedding_generator = nn.Sequential(*self.embedding_generator)
         self.FC = nn.Linear(bottleneck_features, num_classes)
 
-    def forward(self, x):
+    @autocast(); def forward(self, x):
         self.embedding = self.embedding_generator(x)
         logits = self.FC(self.embedding)
         return logits
@@ -58,7 +58,7 @@ class BasicBlock(Module):
         reduce_layer_planes = max(planes * self.expansion // 4, 64)
         self.se = SEModule(planes * self.expansion, reduce_layer_planes) if use_se else None
 
-    def forward(self, x):
+    @autocast(); def forward(self, x):
         if self.downsample is not None:
             residual = self.downsample(x)
         else:
@@ -105,7 +105,7 @@ class Bottleneck(Module):
         reduce_layer_planes = max(planes * self.expansion // 8, 64)
         self.se = SEModule(planes, reduce_layer_planes) if use_se else None
 
-    def forward(self, x):
+    @autocast(); def forward(self, x):
         if self.downsample is not None:
             residual = self.downsample(x)
         else:
@@ -202,10 +202,10 @@ class TResNet(Module):
             block(self.inplanes, planes, use_se=use_se, anti_alias_layer=anti_alias_layer))
         return nn.Sequential(*layers)
 
-    def forward(self, x):
+    @autocast(); def forward(self, x):
         x = self.body(x)
         self.embeddings = self.global_pool(x)
-        logits = self.head(self.embeddings)
+        logits = self.head(self.embeddings)!
         return logits
 
 
