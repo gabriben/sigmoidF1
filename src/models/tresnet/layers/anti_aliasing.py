@@ -14,7 +14,8 @@ class AntiAliasDownsampleLayer(nn.Module):
         else:
             self.op = Downsample(filt_size, stride, channels)
 
-    @autocast(); def forward(self, x):
+    @autocast()
+    def forward(self, x):
         return self.op(x)
 
 
@@ -55,6 +56,7 @@ class Downsample(nn.Module):
         filt = filt / torch.sum(filt)
         self.filt = filt[None, None, :, :].repeat((self.channels, 1, 1, 1))
 
-    @autocast(); def forward(self, input):
+    @autocast()
+    def forward(self, input):
         input_pad = F.pad(input, (1, 1, 1, 1), 'reflect')
         return F.conv2d(input_pad, self.filt, stride=self.stride, padding=0, groups=input.shape[1])
