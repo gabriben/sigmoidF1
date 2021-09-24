@@ -143,6 +143,12 @@ def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 
         model.load_state_dict(filtered_dict, strict=False)
     print('done\n')
 
+    #parallel
+    if torch.cuda.device_count() > 1:
+        print("Let's use", torch.cuda.device_count(), "GPUs!")
+        # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
+        model = nn.DataParallel(model)
+
     os.makedirs("models", exist_ok=True)
 
     if "coco" in data:
@@ -240,12 +246,6 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
                 output = model(inputData).float()  # sigmoid will be done in loss !
             loss = criterion(output, target)
             model.zero_grad()
-
-            #parallel
-            if torch.cuda.device_count() > 1:
-                print("Let's use", torch.cuda.device_count(), "GPUs!")
-                # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
-                model = nn.DataParallel(model)
 
             scaler.scale(loss).backward()
             # loss.backward()
