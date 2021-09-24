@@ -241,6 +241,12 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
             loss = criterion(output, target)
             model.zero_grad()
 
+            #parallel
+            if torch.cuda.device_count() > 1:
+                print("Let's use", torch.cuda.device_count(), "GPUs!")
+                # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
+                model = nn.DataParallel(model)
+
             scaler.scale(loss).backward()
             # loss.backward()
 
