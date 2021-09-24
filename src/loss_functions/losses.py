@@ -9,7 +9,7 @@ class sigmoidF1(nn.Module):
         self.S = S
         self.E = E
 
-    @autocast()
+    @torch.cuda.amp.autocast()
     def forward(self, y_hat, y):
         
         y_hat = torch.sigmoid(y_hat)
@@ -40,7 +40,7 @@ class AsymmetricLoss(nn.Module):
         self.disable_torch_grad_focal_loss = disable_torch_grad_focal_loss
         self.eps = eps
 
-    @autocast()
+    @torch.cuda.amp.autocast()
     def forward(self, x, y):
         """"
         Parameters
@@ -95,7 +95,7 @@ class AsymmetricLossOptimized(nn.Module):
         # prevent memory allocation and gpu uploading every iteration, and encourages inplace operations
         self.targets = self.anti_targets = self.xs_pos = self.xs_neg = self.asymmetric_w = self.loss = None
 
-    @autocast()
+    @torch.cuda.amp.autocast()
     def forward(self, x, y):
         """"
         Parameters
@@ -148,7 +148,7 @@ class ASLSingleLabel(nn.Module):
         self.gamma_neg = gamma_neg
         self.reduction = reduction
 
-    @autocast()
+    @torch.cuda.amp.autocast()
     def forward(self, inputs, target):
         '''
         "input" dimensions: - (batch_size,number_classes)

@@ -9,7 +9,7 @@ class FastAvgPool2d(nn.Module):
         super(FastAvgPool2d, self).__init__()
         self.flatten = flatten
 
-    @autocast()
+    @torch.cuda.amp.autocast()
     def forward(self, x):
         if self.flatten:
             in_size = x.size()
