@@ -132,11 +132,11 @@ def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 
         #    model.load_state_dict(state, strict=False)
         #else:
         if "_1K" in model_file_name:
-            state = torch.load(args.model_path, map_location='cpu')    
+            state = torch.load(args.model_path) #, map_location='cpu'
             filtered_dict = {k: v for k, v in state['model'].items() if
                          (k in model.state_dict() and 'head.fc' not in k)}
         elif "_21K" in model_file_name:
-            state = torch.load(args.model_path, map_location='cpu')    
+            state = torch.load(args.model_path) # , map_location='cpu'
             filtered_dict = {k: v for k, v in state['state_dict'].items() if
                          (k in model.state_dict() and 'head.fc' not in k)}
             
