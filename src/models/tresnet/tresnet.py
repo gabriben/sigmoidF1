@@ -209,7 +209,7 @@ class TResNet(Module):
     def forward(self, x):
         x = self.body(x)
         self.embeddings = self.global_pool(x)
-        logits = self.head(self.embeddings)!
+        logits = self.head(self.embeddings)
         return logits
 
 
