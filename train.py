@@ -1,5 +1,6 @@
 import numpy
 import os
+import time
 import argparse
 import torch
 import torch.nn.parallel
@@ -253,10 +254,10 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
             # store information
             if i % 100 == 0:
                 trainInfoList.append([epoch, i, loss.item()])
-                print('Epoch [{}/{}], Step [{}/{}], LR {:.1e}, Loss: {:.1f}'
+                print('Epoch [{}/{}], Step [{}/{}], LR {:.1e}, Loss: {:.1f}, Time: {}'
                       .format(epoch, Epochs, str(i).zfill(3), str(steps_per_epoch).zfill(3),
                               scheduler.get_last_lr()[0], \
-                              loss.item()))
+                              loss.item(), time.ctime()))
             # if i == 50:
             #     break
 
