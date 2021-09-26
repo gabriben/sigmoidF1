@@ -1,4 +1,5 @@
 import logging
+import timm
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +19,8 @@ def create_model(args):
         model = TResnetL(model_params)
     elif args.model_name=='tresnet_xl':
         model = TResnetXL(model_params)
+    elif args.model_name == 'resnet101':
+        model = timm.create_model('resnet101', pretrained=True, num_classes=args.num_classes)
     else:
         print("model: {} not found !!".format(args.model_name))
         exit(-1)

@@ -126,7 +126,7 @@ def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 
     print('creating model...')
     model = create_model(args).cuda()
     ###print(len(model))
-    if args.model_path:  # make sure to load pretrained ImageNet model
+    if os.path.exists(args.model_path):  # make sure to load pretrained ImageNet model
         #if "tresnet_m.pth" in args.model_path:
         #    state = torch.load(args.model_path, map_location='cpu')
         #    model.load_state_dict(state, strict=False)
