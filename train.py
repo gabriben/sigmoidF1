@@ -144,10 +144,10 @@ def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 
     print('done\n')
 
     #parallel
-    if torch.cuda.device_count() > 1:
-        print("Let's use", torch.cuda.device_count(), "GPUs!")
-        # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
-        model = torch.nn.DataParallel(model, device_ids=[0,1,2,3])
+    # if torch.cuda.device_count() > 1:
+    #     print("Let's use", torch.cuda.device_count(), "GPUs!")
+    #     # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
+    #     model = torch.nn.DataParallel(model, device_ids=[0,1,2,3])
 
     os.makedirs("models", exist_ok=True)
 
