@@ -143,7 +143,7 @@ def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 
         model.load_state_dict(filtered_dict, strict=False)
     print('done\n')
 
-    parallel
+    # parallel
     if torch.cuda.device_count() > 1:
         # torch.cuda.set_device(0)
         if not torch.distributed.is_initialized():
