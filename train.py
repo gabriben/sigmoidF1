@@ -143,11 +143,11 @@ def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 
         model.load_state_dict(filtered_dict, strict=False)
     print('done\n')
 
-    #parallel
-    # if torch.cuda.device_count() > 1:
-    #     print("Let's use", torch.cuda.device_count(), "GPUs!")
-    #     # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
-    #     model = torch.nn.DataParallel(model, device_ids=[0,1,2,3])
+    parallel
+    if torch.cuda.device_count() > 1:
+        print("Let's use", torch.cuda.device_count(), "GPUs!")
+        # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
+        model = torch.nn.DataParallel(model, device_ids=[0,1,2,3])
 
     os.makedirs("models", exist_ok=True)
 
@@ -281,7 +281,7 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
         if mAP_score > highest_mAP:
             highest_mAP = mAP_score
             try:
-                torch.save(model.state_dict(), os.path.join(
+                torch.save({'net': model.net, 'state': model.state_dict()}, os.path.join(
                     'models/', 'model-highest.ckpt'))
             except:
                 pass
