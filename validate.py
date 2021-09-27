@@ -22,7 +22,6 @@ import mlflow.pytorch
 mlflow.set_experiment("/Users/gabriel.benedict@rtl.nl/multilabel/PASCAL-VOC/ASL run")
 import tempfile
 import tensorflow as tf
-import pytorch_lightning
 
 parser = argparse.ArgumentParser(description='PyTorch ImageNet Training')
 parser.add_argument('data', metavar='DIR', help='path to dataset')
