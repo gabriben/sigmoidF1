@@ -20,7 +20,6 @@ import mlflow.pytorch
 mlflow.set_experiment("/Users/gabriel.benedict@rtl.nl/multilabel/PASCAL-VOC/ASL run")
 import tempfile
 import tensorflow as tf
-import pytorch_lightning
 
 parser = argparse.ArgumentParser(description='PyTorch MS_COCO Training')
 parser.add_argument('--data', help='path to dataset', default='/dbfs/datasets/coco', type=str) # , metavar='DIR'
