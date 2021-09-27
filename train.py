@@ -148,7 +148,7 @@ def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 
         torch.cuda.set_device(0)
         if not torch.distributed.is_initialized():
             torch.distributed.init_process_group(backend='nccl', init_method='env://')
-        model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[0,1,2,3])
+        model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[0])
         
         # print("Let's use", torch.cuda.device_count(), "GPUs!")
         # # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
