@@ -213,7 +213,7 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
     # output_dir = tempfile.mkdtemp()
     # print("Writing TensorFlow events locally to %s\n" % output_dir)
     # writer = tf.summary.create_file_writer(output_dir, graph=sess.graph)
-    mlflow.pytorch.autolog()
+    # mlflow.pytorch.autolog()
     
     ema = ModelEma(model, 0.9997)  # 0.9997^641=0.82
 
