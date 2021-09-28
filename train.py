@@ -285,8 +285,11 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
         if mAP_score > highest_mAP:
             highest_mAP = mAP_score
             try:
-                torch.save({'net': model.net, 'state': model.state_dict()}, os.path.join(
-                    'models/', 'model-highest.ckpt'))
+                p = os.path.join('models/', 'model-highest.ckpt')
+                torch.save(model.state_dict(), p)
+                mlflow.log_artifact(p)
+                # torch.save({'net': model.net, 'state': model.state_dict()}, os.path.join(
+                    # 'models/', 'model-highest.ckpt'))
             except:
                 pass
         print('current_mAP = {:.2f}, highest_mAP = {:.2f}\n'.format(mAP_score, highest_mAP))
