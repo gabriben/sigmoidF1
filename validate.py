@@ -81,7 +81,12 @@ class Map(dict):
         super(Map, self).__delitem__(key)
         del self.__dict__[key]
 
-
+# https://github.com/Alibaba-MIIL/ImageNet21K/blob/main/src_files/helper_functions/distributed.py        
+def reduce_tensor(tensor, n):
+    rt = tensor.clone()
+    torch.distributed.all_reduce(rt, op=torch.distributed.ReduceOp.SUM)
+    rt /= n
+    return rt
 
 def main(data = '/dbfs/datasets/coco/', num_classes = 80, model_name = "tresnet_m", image_size = 224):
     #args = parser.parse_args()
@@ -162,8 +167,13 @@ def validate_multi(val_loader, model, args):
         target = target.max(dim=1)[0]
         # compute output
         with torch.no_grad():
-            output = Sig(model(input.cuda())).cpu()
-
+            #parallel
+            with autocast():
+                output = Sig(model(input.cuda())).cpu()
+                if torch.cuda.device_count() > 1:
+                    output = reduce_tensor(output, torch.cuda.device_count())
+                    torch.cuda.synchronize()
+        
         # for mAP calculation
         preds.append(output.cpu())
         targets.append(target.cpu())
