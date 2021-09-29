@@ -148,7 +148,7 @@ def main(data = '/dbfs/datasets/coco/', num_classes = 80, model_name = "tresnet_
 
     validate_multi(val_loader, model, args)
 
-
+@torch.cuda.amp.autocast()
 def validate_multi(val_loader, model, args):
     print("starting actual validation")
     batch_time = AverageMeter()
@@ -166,7 +166,6 @@ def validate_multi(val_loader, model, args):
         target = target
         target = target.max(dim=1)[0]
         # compute output
-        @torch.cuda.amp.autocast()
         with torch.no_grad():
             #parallel
             output = Sig(model(input.cuda())).cpu()
