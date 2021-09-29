@@ -168,7 +168,7 @@ def validate_multi(val_loader, model, args):
         # compute output
         with torch.no_grad():
             #parallel
-            output = Sig(model(input.cuda())).cpu()
+            output = Sig(model(input.cuda())) #.cpu()
             if torch.cuda.device_count() > 1:
                 output = reduce_tensor(output, torch.cuda.device_count())
                 torch.cuda.synchronize()
