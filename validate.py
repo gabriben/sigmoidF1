@@ -102,6 +102,14 @@ def main(data = '/dbfs/datasets/coco/', num_classes = 80, model_name = "tresnet_
     state = torch.load(args.model_path, map_location='cpu')
     args.do_bottleneck_head = False
     model = create_model(args).cuda()
+
+    # parallel
+    if torch.cuda.device_count() > 1:
+        torch.cuda.set_device(0)
+        if not torch.distributed.is_initialized():
+            torch.distributed.init_process_group(backend='nccl', init_method='env://')
+        model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[0])
+    
     model.load_state_dict(state, strict=True)
     model.eval()
     
