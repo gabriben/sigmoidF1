@@ -166,13 +166,13 @@ def validate_multi(val_loader, model, args):
         target = target
         target = target.max(dim=1)[0]
         # compute output
+        @torch.cuda.amp.autocast()
         with torch.no_grad():
             #parallel
-            with autocast():
-                output = Sig(model(input.cuda())).cpu()
-                if torch.cuda.device_count() > 1:
-                    output = reduce_tensor(output, torch.cuda.device_count())
-                    torch.cuda.synchronize()
+            output = Sig(model(input.cuda())).cpu()
+            if torch.cuda.device_count() > 1:
+                output = reduce_tensor(output, torch.cuda.device_count())
+                torch.cuda.synchronize()
         
         # for mAP calculation
         preds.append(output.cpu())
