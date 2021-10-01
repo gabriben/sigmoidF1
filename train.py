@@ -313,13 +313,13 @@ def validate_multi(val_loader, model, ema_model):
         # compute output
         with torch.no_grad():
             with autocast():
-                output_regular = Sig(model(input.cuda())).cpu()
-                output_ema = Sig(ema_model.module(input.cuda())).cpu()
+                output_regular = Sig(model(input.cuda())) #.cpu()
+                output_ema = Sig(ema_model.module(input.cuda())) #.cpu()
 
         # for mAP calculation
-        preds_regular.append(output_regular.cpu().detach())
-        preds_ema.append(output_ema.cpu().detach())
-        targets.append(target.cpu().detach())
+        preds_regular.append(output_regular) #.cpu().detach())
+        preds_ema.append(output_ema) #.cpu().detach())
+        targets.append(target) #.cpu().detach())
 
     mAP_score_regular = mAP(torch.cat(targets).numpy(), torch.cat(preds_regular).numpy())
     mAP_score_ema = mAP(torch.cat(targets).numpy(), torch.cat(preds_ema).numpy())
