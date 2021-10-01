@@ -148,7 +148,7 @@ def main(data = '/dbfs/datasets/coco/', num_classes = 80, model_name = "tresnet_
 
     validate_multi(val_loader, model, args)
 
-@torch.cuda.amp.autocast()
+# @torch.cuda.amp.autocast()
 def validate_multi(val_loader, model, args):
     print("starting actual validation")
     batch_time = AverageMeter()
@@ -169,10 +169,10 @@ def validate_multi(val_loader, model, args):
         with torch.no_grad():
             #parallel
             output = Sig(model(input.cuda())) #.cpu()
-            if torch.cuda.device_count() > 1:
-                output = reduce_tensor(output, torch.cuda.device_count())
-                print(output)
-                torch.cuda.synchronize()
+            # if torch.cuda.device_count() > 1:
+            #     output = reduce_tensor(output, torch.cuda.device_count())
+            #     print(output)
+            #     torch.cuda.synchronize()
         
         # for mAP calculation
         preds.append(output.cpu())
