@@ -253,7 +253,10 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
             target = target.max(dim=1)[0]
             with autocast():  # mixed precision
                 output = model(inputData).float()  # sigmoid will be done in loss !
-            loss = criterion(output, target)
+            if args.loss_function == "crossEntropy":
+                loss = criterion(output, target.float())
+            else:
+                loss = criterion(output, target)
             model.zero_grad()
 
             scaler.scale(loss).backward()
