@@ -15,6 +15,7 @@ from src.helper_functions.helper_functions import mAP, AverageMeter, CocoDetecti
 from src.models import create_model
 import numpy as np
 
+import timm
 
 #mlflow
 import mlflow
@@ -114,8 +115,12 @@ def main(data = '/dbfs/datasets/coco/', num_classes = 80, model_name = "tresnet_
         if not torch.distributed.is_initialized():
             torch.distributed.init_process_group(backend='nccl', init_method='env://')
         model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[0])
-    
-    model.load_state_dict(state, strict=True)
+
+    if "resnet" in model_file_name:
+        timm.models.helpers.load_checkpoint(model)
+    else:
+        model.load_state_dict(state, strict=True)
+
     model.eval()
     
     print('done\n')
