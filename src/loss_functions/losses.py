@@ -29,6 +29,22 @@ class sigmoidF1(nn.Module):
 
         return macroCost
 
+    # https://github.com/Alibaba-MIIL/ImageNet21K/blob/main/src_files/loss_functions/losses.py
+class CrossEntropyLS(nn.Module):
+    def __init__(self, eps: float = 0.2):
+        super(CrossEntropyLS, self).__init__()
+        self.eps = eps
+        self.logsoftmax = nn.LogSoftmax(dim=-1)
+
+    @torch.cuda.amp.autocast()
+    def forward(self, inputs, target):
+        num_classes = inputs.size()[-1]
+        log_preds = self.logsoftmax(inputs)
+        targets_classes = torch.zeros_like(inputs).scatter_(1, target.long().unsqueeze(1), 1)
+        targets_classes.mul_(1 - self.eps).add_(self.eps / num_classes)
+        cross_entropy_loss_tot = -targets_classes.mul(log_preds)
+        cross_entropy_loss = cross_entropy_loss_tot.sum(dim=-1).mean()
+        return cross_entropy_loss
 
 class AsymmetricLoss(nn.Module):
     def __init__(self, gamma_neg=4, gamma_pos=1, clip=0.05, eps=1e-8, disable_torch_grad_focal_loss=True):

@@ -228,6 +228,8 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
         criterion = AsymmetricLoss(gamma_neg=4, gamma_pos=0, clip=0.05, disable_torch_grad_focal_loss=True)
     elif args.loss_function == "sigmoidF1":
         criterion = sigmoidF1(S = S, E = E)
+    elif args.loss_function == "crossEntropy":
+        criterion = CrossEntropyLS()
         
     parameters = add_weight_decay(model, weight_decay)
     optimizer = torch.optim.Adam(params=parameters, lr=lr, weight_decay=0)  # true wd, filter_bias_and_bn
