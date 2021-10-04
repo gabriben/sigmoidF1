@@ -116,7 +116,7 @@ def main(data = '/dbfs/datasets/coco/', num_classes = 80, model_name = "tresnet_
             torch.distributed.init_process_group(backend='nccl', init_method='env://')
         model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[0])
 
-    if "resnet" in model_file_name:
+    if "resnet101" in model_name:
         timm.models.helpers.load_checkpoint(model)
     else:
         model.load_state_dict(state, strict=True)
