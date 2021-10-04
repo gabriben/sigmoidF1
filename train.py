@@ -10,7 +10,7 @@ import torchvision.transforms as transforms
 from torch.optim import lr_scheduler
 from src.helper_functions.helper_functions import mAP, CocoDetection, CutoutPIL, ModelEma, add_weight_decay
 from src.models import create_model
-from src.loss_functions.losses import AsymmetricLoss, sigmoidF1, CrossEntropyLS
+from src.loss_functions.losses import AsymmetricLoss, sigmoidF1
 from randaugment import RandAugment
 from torch.cuda.amp import GradScaler, autocast
 
@@ -232,7 +232,7 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
     elif args.loss_function == "sigmoidF1":
         criterion = sigmoidF1(S = S, E = E)
     elif args.loss_function == "crossEntropy":
-        criterion = CrossEntropyLS()
+        criterion = torch.nn.BCEWithLogitsLoss()
         
     parameters = add_weight_decay(model, weight_decay)
     optimizer = torch.optim.Adam(params=parameters, lr=lr, weight_decay=0)  # true wd, filter_bias_and_bn
