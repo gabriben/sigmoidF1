@@ -10,7 +10,7 @@ import torchvision.transforms as transforms
 from torch.optim import lr_scheduler
 from src.helper_functions.helper_functions import mAP, CocoDetection, CutoutPIL, ModelEma, add_weight_decay
 from src.models import create_model
-from src.loss_functions.losses import AsymmetricLoss, sigmoidF1
+from src.loss_functions.losses import AsymmetricLoss, sigmoidF1, CrossEntropyLS
 from randaugment import RandAugment
 from torch.cuda.amp import GradScaler, autocast
 
@@ -92,7 +92,9 @@ class Map(dict):
         super(Map, self).__delitem__(key)
         del self.__dict__[key]
 
-def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 1, loss = "ASL", num_classes = 80, E = 1, S = -9, image_size = 224):
+def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 1,
+          loss = "ASL", num_classes = 80, E = 1, S = -9, image_size = 224,
+          batch_size = 64):
     # try: # run from shell with arguments
     #   args = parsxer.parse_args()
     #   args.do_bottleneck_head = False
@@ -113,6 +115,7 @@ def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 
     args.image_size = image_size
     args.model_name = "tresnet_l" if "_l_" in model_file_name else "tresnet_m"    
     args.model_path = args.model_path + model_file_name + ".pth"
+    args.batch_size = batch_size
     args.do_bottleneck_head = False
     print(args)
 
