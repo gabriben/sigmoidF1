@@ -100,6 +100,7 @@ def main(data = '/dbfs/datasets/coco/', num_classes = 80, model_name = "tresnet_
     args.model_name = model_name
     args.data = data
     args.image_size = image_size
+    args.model_path = 'models/model-highest.ckpt'
 
     # setup model
     print('creating and loading the model...')
