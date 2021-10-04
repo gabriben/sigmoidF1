@@ -20,7 +20,12 @@ def create_model(args):
     elif args.model_name=='tresnet_xl':
         model = TResnetXL(model_params)
     elif args.model_name == 'resnet101':
-        model = timm.create_model('resnet101', pretrained=True, num_classes=args.num_classes)
+        # check if we are training
+        if args.model_path == '/dbfs/models/':
+            model = timm.create_model('resnet101', pretrained=True, num_classes=args.num_classes)
+        # or validating
+        else:
+            model = timm.create_model('resnet101', pretrained=False, num_classes=args.num_classes, checkpoint_path = args.model_path)
     else:
         print("model: {} not found !!".format(args.model_name))
         exit(-1)
