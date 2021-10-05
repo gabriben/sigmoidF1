@@ -80,7 +80,8 @@ class focalLoss(nn.Module):
         if self.gamma and self.gamma < 0:
             raise ValueError("Value of gamma should be greater than or equal to zero.")        
 
-        ce = torch.nn.BCEWithLogitsLoss(y, y_hat)
+        ceLoss = torch.nn.BCEWithLogitsLoss()
+        ce = ceLoss(y, y_hat)
 
         y_hat = torch.sigmoid(y_hat)
 
