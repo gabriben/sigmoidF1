@@ -108,6 +108,7 @@ def main(data = '/dbfs/datasets/coco/', num_classes = 80, model_name = "tresnet_
     # state = checkpoint["state"]
     state = torch.load(args.model_path) #, map_location='cpu')
     args.do_bottleneck_head = False
+    print(args.model_name)
     model = create_model(args).cuda()
 
     # parallel
