@@ -113,7 +113,12 @@ def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 
     args.S = S
     args.E = E
     args.image_size = image_size
-    args.model_name = "tresnet_l" if "_l_" in model_file_name else "tresnet_m"    
+    if "_l_" in model_file_name:
+        args.model_name = "tresnet_l"
+    elif "_m_" in model_file_name:
+        args.model_name = "tresnet_m"
+    else:
+        args.model_name = "resnet101"
     args.model_path = args.model_path + model_file_name + ".pth"
     args.batch_size = batch_size
     args.do_bottleneck_head = False
