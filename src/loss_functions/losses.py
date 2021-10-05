@@ -30,6 +30,26 @@ class sigmoidF1(nn.Module):
 
         return macroCost
 
+class macroSoftF1(nn.Module):
+
+    def __init__(self):
+        super(macroSoftF1, self).__init__()
+
+    @torch.cuda.amp.autocast()
+    def forward(self, y_hat, y):
+        
+        y_hat = torch.sigmoid(y_hat)
+
+        tp = torch.sum(y_hat * y, dim=0)
+        fp = torch.sum(y_hat * (1 - y), dim=0)
+        fn = torch.sum((1 - y_hat) * y, dim=0)
+
+        macroSoft_f1 = 2*tp / (2*tp + fn + fp + 1e-16)
+        cost = 1 - macroSoft_f1
+        macroCost = torch.mean(cost)
+
+        return macroCost
+    
     # https://github.com/Alibaba-MIIL/ImageNet21K/blob/main/src_files/loss_functions/losses.py
 class CrossEntropyLS(nn.Module):
     def __init__(self, eps: float = 0.2):
