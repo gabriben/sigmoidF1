@@ -229,17 +229,17 @@ def validate_multi(val_loader, model, args):
         if i % args.print_freq == 0:
             print('Test: [{0}/{1}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                  'Precision {prec.val:.2f} ({prec.avg:.2f})\t'
-                  'Recall {rec.val:.2f} ({rec.avg:.2f})'.format(
+                  'Precision {prec.val:.3f} ({prec.avg:.3f})\t'
+                  'Recall {rec.val:.3f} ({rec.avg:.3f})'.format(
                 i, len(val_loader), batch_time=batch_time,
                 prec=prec, rec=rec))
             print(
-                'P_C {:.2f} R_C {:.2f} F_C {:.2f} P_O {:.2f} R_O {:.2f} F_O {:.2f}'
+                'P_C {:.3f} R_C {:.3f} F_C {:.3f} P_O {:.3f} R_O {:.3f} F_O {:.3f}'
                     .format(mean_p_c, mean_r_c, mean_f_c, p_o, r_o, f_o))
 
     print(
         '--------------------------------------------------------------------')
-    print(' * P_C {:.2f} R_C {:.2f} F_C {:.2f} P_O {:.2f} R_O {:.2f} F_O {:.2f}'
+    print(' * P_C {:.3f} R_C {:.3f} F_C {:.3f} P_O {:.3f} R_O {:.3f} F_O {:.3f}'
           .format(mean_p_c, mean_r_c, mean_f_c, p_o, r_o, f_o))
 
     mAP_score = mAP(torch.cat(targets).numpy(), torch.cat(preds).numpy())
