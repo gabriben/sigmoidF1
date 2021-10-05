@@ -240,6 +240,8 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
         criterion = torch.nn.BCEWithLogitsLoss()
     elif args.loss_function == "unboundedF1":
         criterion = macroSoftF1()
+    elif args.loss_function == "focalLoss":
+        criterion = focalLoss()        
         
     parameters = add_weight_decay(model, weight_decay)
     optimizer = torch.optim.Adam(params=parameters, lr=lr, weight_decay=0)  # true wd, filter_bias_and_bn

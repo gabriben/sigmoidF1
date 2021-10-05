@@ -49,8 +49,8 @@ class macroSoftF1(nn.Module):
         macroCost = torch.mean(cost)
 
         return macroCost
-    
-    # https://github.com/Alibaba-MIIL/ImageNet21K/blob/main/src_files/loss_functions/losses.py
+
+# https://github.com/Alibaba-MIIL/ImageNet21K/blob/main/src_files/loss_functions/losses.py
 class CrossEntropyLS(nn.Module):
     def __init__(self, eps: float = 0.2):
         super(CrossEntropyLS, self).__init__()
@@ -69,37 +69,29 @@ class CrossEntropyLS(nn.Module):
 
 
 
-# https://github.com/clcarwin/focal_loss_pytorch/blob/master/focalloss.py
+# translation from https://github.com/tensorflow/addons/blob/v0.14.0/tensorflow_addons/losses/focal_loss.py#L26-L81
 class FocalLoss(nn.Module):
-    def __init__(self, gamma=0, alpha=None, size_average=True):
+    def __init__(self, gamma=2.0, alpha=0.25):
         super(FocalLoss, self).__init__()
         self.gamma = gamma
         self.alpha = alpha
-        if isinstance(alpha,(float,int,long)): self.alpha = torch.Tensor([alpha,1-alpha])
-        if isinstance(alpha,list): self.alpha = torch.Tensor(alpha)
-        self.size_average = size_average
 
-    def forward(self, input, target):
-        if input.dim()>2:
-            input = input.view(input.size(0),input.size(1),-1)  # N,C,H,W => N,C,H*W
-            input = input.transpose(1,2)    # N,C,H*W => N,H*W,C
-            input = input.contiguous().view(-1,input.size(2))   # N,H*W,C => N*H*W,C
-        target = target.view(-1,1)
+    def forward(self, y_hat, y):
+        if gamma and gamma < 0:
+            raise ValueError("Value of gamma should be greater than or equal to zero.")        
 
-        logpt = F.log_softmax(input)
-        logpt = logpt.gather(1,target)
-        logpt = logpt.view(-1)
-        pt = Variable(logpt.data.exp())
+        ce = torch.nn.BCEWithLogitsLoss(y, y_hat)
 
-        if self.alpha is not None:
-            if self.alpha.type()!=input.data.type():
-                self.alpha = self.alpha.type_as(input.data)
-            at = self.alpha.gather(0,target.data.view(-1))
-            logpt = logpt * Variable(at)
+        y_hat = torch.sigmoid(y_hat)
 
-        loss = -1 * (1-pt)**self.gamma * logpt
-        if self.size_average: return loss.mean()
-        else: return loss.sum()
+        p_t = (y * y_hat) + ((1 - y) * (1 - y_hat))
+
+        alpha_factor = y * alpha + (1 - y) * (1 - alpha)
+        modulating_factor = tf.pow((1.0 - p_t), gamma)
+
+        focal_loss = torch.sum(alpha_factor * modulating_factor * ce)
+
+        return focal_loss
 
     
 class AsymmetricLoss(nn.Module):
