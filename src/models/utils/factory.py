@@ -22,9 +22,11 @@ def create_model(args):
     elif args.model_name == 'resnet101':
         # check if we are training
         if '/dbfs/models/' in args.model_path:
+            print("create timm model")
             model = timm.create_model('resnet101', pretrained=True, num_classes=args.num_classes)
         # or validating
         else:
+            print("load timm model")
             model = timm.create_model('resnet101', pretrained=False, num_classes=args.num_classes, checkpoint_path = args.model_path)
     else:
         print("model: {} not found !!".format(args.model_name))
