@@ -21,7 +21,7 @@ def create_model(args):
         model = TResnetXL(model_params)
     elif args.model_name == 'resnet101':
         # check if we are training
-        if args.model_path == '/dbfs/models/':
+        if '/dbfs/models/' in args.model_path:
             model = timm.create_model('resnet101', pretrained=True, num_classes=args.num_classes)
         # or validating
         else:
