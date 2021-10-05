@@ -77,7 +77,7 @@ class focalLoss(nn.Module):
         self.alpha = alpha
 
     def forward(self, y_hat, y):
-        if gamma and gamma < 0:
+        if self.gamma and self.gamma < 0:
             raise ValueError("Value of gamma should be greater than or equal to zero.")        
 
         ce = torch.nn.BCEWithLogitsLoss(y, y_hat)
@@ -86,8 +86,8 @@ class focalLoss(nn.Module):
 
         p_t = (y * y_hat) + ((1 - y) * (1 - y_hat))
 
-        alpha_factor = y * alpha + (1 - y) * (1 - alpha)
-        modulating_factor = tf.pow((1.0 - p_t), gamma)
+        alpha_factor = y * self.alpha + (1 - y) * (1 - self.alpha)
+        modulating_factor = tf.pow((1.0 - p_t), self.gamma)
 
         focal_loss = torch.sum(alpha_factor * modulating_factor * ce)
 
