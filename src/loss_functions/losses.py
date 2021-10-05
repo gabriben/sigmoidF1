@@ -70,7 +70,7 @@ class CrossEntropyLS(nn.Module):
 
 
 # translation from https://github.com/tensorflow/addons/blob/v0.14.0/tensorflow_addons/losses/focal_loss.py#L26-L81
-class FocalLoss(nn.Module):
+class focalLoss(nn.Module):
     def __init__(self, gamma=2.0, alpha=0.25):
         super(FocalLoss, self).__init__()
         self.gamma = gamma
