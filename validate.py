@@ -10,6 +10,7 @@ import torch.optim
 import torch.utils.data.distributed
 import torchvision.transforms as transforms
 import os
+import VLAP
 
 from src.helper_functions.helper_functions import mAP, AverageMeter, CocoDetection
 from src.models import create_model
@@ -237,6 +238,9 @@ def validate_multi(val_loader, model, args):
                 'P_C {:.3f} R_C {:.3f} F_C {:.3f} P_O {:.3f} R_O {:.3f} F_O {:.3f}'
                     .format(mean_p_c, mean_r_c, mean_f_c, p_o, r_o, f_o))
 
+
+    VLAP.computeMetrics(torch.cat(preds).numpy(), torch.cat(targets).numpy())
+            
     print(
         '--------------------------------------------------------------------')
     print(' * P_C {:.3f} R_C {:.3f} F_C {:.3f} P_O {:.3f} R_O {:.3f} F_O {:.3f}'

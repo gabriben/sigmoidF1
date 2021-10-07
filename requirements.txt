@@ -4,3 +4,4 @@ git+https://github.com/mapillary/inplace_abn.git@v1.0.12
 randaugment
 pycocotools
 timm
+git+https://github.com/gabriben/VLAP.git
