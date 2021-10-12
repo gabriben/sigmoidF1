@@ -168,7 +168,7 @@ def validate_multi(val_loader, model, args, logMLFlow = True):
     Sig = torch.nn.Sigmoid()
 
     end = time.time()
-    tp, fp, fn, tn, count = 0, 0, 0, 0, 0
+    tp, fp, fn, tn, count, rep = 0, 0, 0, 0, 0, 0
     preds = []
     targets = []
     for i, (input, target) in enumerate(val_loader):
