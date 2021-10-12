@@ -222,7 +222,7 @@ def validate_multi(val_loader, model, args):
                i in range(len(tp))]
 
         print(targets)
-        print(targets[0])
+        print(targets[0][:, 0])
         
         wf1 = [targets[i].sum(dim = 1) * 2 * p_c[i] * r_c[i] / (p_c[i] + r_c[i]) if tp[i] > 0 else 0.0 for
                i in range(len(tp))]
