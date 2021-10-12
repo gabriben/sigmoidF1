@@ -92,7 +92,8 @@ def reduce_tensor(tensor, n):
     rt /= n
     return rt
 
-def main(data = '/dbfs/datasets/coco/', num_classes = 80, model_name = "tresnet_m", image_size = 224):
+def main(data = '/dbfs/datasets/coco/', num_classes = 80, model_name = "tresnet_m", image_size = 224,
+         logMLFlow = True):
     #args = parser.parse_args()
 
 
@@ -154,10 +155,10 @@ def main(data = '/dbfs/datasets/coco/', num_classes = 80, model_name = "tresnet_
         val_dataset, batch_size=args.batch_size, shuffle=False,
         num_workers=args.workers, pin_memory=True)
 
-    validate_multi(val_loader, model, args)
+    validate_multi(val_loader, model, args, logMLFlow)
 
 # @torch.cuda.amp.autocast()
-def validate_multi(val_loader, model, args):
+def validate_multi(val_loader, model, args, logMLFlow = True):
     print("starting actual validation")
     batch_time = AverageMeter()
     prec = AverageMeter()
@@ -220,11 +221,8 @@ def validate_multi(val_loader, model, args):
                for i in range(len(tp))]
         f_c = [2 * p_c[i] * r_c[i] / (p_c[i] + r_c[i]) if tp[i] > 0 else 0.0 for
                i in range(len(tp))]
-
-        print(targets)
-        print(targets[0][:, 0])
         
-        wf1 = [targets[i].sum(dim = 1) * 2 * p_c[i] * r_c[i] / (p_c[i] + r_c[i]) if tp[i] > 0 else 0.0 for
+        wf1 = [targets[0][:, i].sum() * 2 * p_c[i] * r_c[i] / (p_c[i] + r_c[i]) if tp[i] > 0 else 0.0 for
                i in range(len(tp))]
                 
         mean_p_c = sum(p_c) / len(p_c)
@@ -244,24 +242,25 @@ def validate_multi(val_loader, model, args):
                 i, len(val_loader), batch_time=batch_time,
                 prec=prec, rec=rec))
             print(
-                'P_C {:.3f} R_C {:.3f} F_C {:.3f} P_O {:.3f} R_O {:.3f} F_O {:.3f}'
-                    .format(mean_p_c, mean_r_c, mean_f_c, p_o, r_o, f_o))
+                'P_C {:.3f} R_C {:.3f} F_C {:.3f} P_O {:.3f} R_O {:.3f} F_O {:.3f} WF1 {:.3f}'
+                    .format(mean_p_c, mean_r_c, mean_f_c, p_o, r_o, f_o, mean_wf1))
 
 
     VLAP.computeMetrics(torch.cat(preds).numpy(), torch.cat(targets).numpy())
             
     print(
         '--------------------------------------------------------------------')
-    print(' * P_C {:.3f} R_C {:.3f} F_C {:.3f} P_O {:.3f} R_O {:.3f} F_O {:.3f}'
-          .format(mean_p_c, mean_r_c, mean_f_c, p_o, r_o, f_o))
+    print(' * P_C {:.3f} R_C {:.3f} F_C {:.3f} P_O {:.3f} R_O {:.3f} F_O {:.3f} WF1 {:.3f}'
+          .format(mean_p_c, mean_r_c, mean_f_c, p_o, r_o, f_o, mean_wf1))
 
     mAP_score = mAP(torch.cat(targets).numpy(), torch.cat(preds).numpy())
     wf1 = f1_score(torch.cat(targets).numpy().astype(int), torch.cat(preds).numpy().astype(int), average = "weighted")
     print("mAP score:", mAP_score)
-    print("weightedF1 score:", wf1)
+    print("weightedF1 score:", mean_wf1)
     #mlflow
-    mlflow.log_metric("mAP_test", mAP_score)
-    mlflow.log_metric("wf1_test", wf1)
+    if logMLFlow:
+        mlflow.log_metric("mAP_test", mAP_score)
+        mlflow.log_metric("wf1_test", mean_wf1)
 
     return
 
