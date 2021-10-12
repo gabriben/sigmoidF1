@@ -195,6 +195,7 @@ def validate_multi(val_loader, model, args, logMLFlow = True):
         fn += (pred - target).eq(-1).sum(dim=0)
         tn += (pred + target).eq(0).sum(dim=0)
         count += input.size(0)
+        rep += target.sum(dim=0)
 
         this_tp = (pred + target).eq(2).sum()
         this_fp = (pred - target).eq(1).sum()
@@ -222,13 +223,13 @@ def validate_multi(val_loader, model, args, logMLFlow = True):
         f_c = [2 * p_c[i] * r_c[i] / (p_c[i] + r_c[i]) if tp[i] > 0 else 0.0 for
                i in range(len(tp))]
         
-        wf1 = [target[:, i].sum() * 2 * p_c[i] * r_c[i] / (p_c[i] + r_c[i]) if tp[i] > 0 else 0.0 for
+        wf1 = [rep[i] * 2 * p_c[i] * r_c[i] / (p_c[i] + r_c[i]) if tp[i] > 0 else 0.0 for
                i in range(len(tp))]
                 
         mean_p_c = sum(p_c) / len(p_c)
         mean_r_c = sum(r_c) / len(r_c)
         mean_f_c = sum(f_c) / len(f_c)
-        mean_wf1 = sum(wf1) / target.sum()
+        mean_wf1 = sum(wf1) / rep.sum()
 
         p_o = tp.sum().float() / (tp + fp).sum().float() * 100.0
         r_o = tp.sum().float() / (tp + fn).sum().float() * 100.0
@@ -260,7 +261,7 @@ def validate_multi(val_loader, model, args, logMLFlow = True):
     #mlflow
     if logMLFlow:
         mlflow.log_metric("mAP_test", mAP_score)
-        mlflow.log_metric("wf1_test", mean_wf1)
+        mlflow.log_metric("wf1_test", mean_wf1[0])
 
     return
 
