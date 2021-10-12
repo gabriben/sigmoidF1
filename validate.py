@@ -221,9 +221,16 @@ def validate_multi(val_loader, model, args):
         f_c = [2 * p_c[i] * r_c[i] / (p_c[i] + r_c[i]) if tp[i] > 0 else 0.0 for
                i in range(len(tp))]
 
+        print(targets)
+        print(targets[0])
+        
+        wf1 = [targets[i].sum(dim = 1) * 2 * p_c[i] * r_c[i] / (p_c[i] + r_c[i]) if tp[i] > 0 else 0.0 for
+               i in range(len(tp))]
+                
         mean_p_c = sum(p_c) / len(p_c)
         mean_r_c = sum(r_c) / len(r_c)
         mean_f_c = sum(f_c) / len(f_c)
+        mean_wf1 = sum(wf1) / targets.sum()
 
         p_o = tp.sum().float() / (tp + fp).sum().float() * 100.0
         r_o = tp.sum().float() / (tp + fn).sum().float() * 100.0
