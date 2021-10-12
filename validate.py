@@ -261,7 +261,7 @@ def validate_multi(val_loader, model, args, logMLFlow = True):
     #mlflow
     if logMLFlow:
         mlflow.log_metric("mAP_test", mAP_score)
-        mlflow.log_metric("wf1_test", mean_wf1.numpy().astype(float))
+        mlflow.log_metric("wf1_test", mean_wf1.numpy().astype(float64))
 
     return
 
