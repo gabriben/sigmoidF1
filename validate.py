@@ -25,6 +25,8 @@ mlflow.set_experiment("/Users/gabriel.benedict@rtl.nl/multilabel/PASCAL-VOC/ASL 
 import tempfile
 import tensorflow as tf
 
+from sklearn.metrics import f1_score
+
 parser = argparse.ArgumentParser(description='PyTorch ImageNet Training')
 parser.add_argument('data', metavar='DIR', help='path to dataset')
 parser.add_argument('--model-name', default='tresnet_m')
@@ -247,9 +249,12 @@ def validate_multi(val_loader, model, args):
           .format(mean_p_c, mean_r_c, mean_f_c, p_o, r_o, f_o))
 
     mAP_score = mAP(torch.cat(targets).numpy(), torch.cat(preds).numpy())
+    wf1 = f1_score(torch.cat(targets).numpy(), torch.cat(preds).numpy(), average = "weighted")
     print("mAP score:", mAP_score)
+    print("weightedF1 score:", wf1)
     #mlflow
     mlflow.log_metric("mAP_test", mAP_score)
+    mlflow.log_metric("wf1_test", wf1)
 
     return
 
