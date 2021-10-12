@@ -222,13 +222,13 @@ def validate_multi(val_loader, model, args, logMLFlow = True):
         f_c = [2 * p_c[i] * r_c[i] / (p_c[i] + r_c[i]) if tp[i] > 0 else 0.0 for
                i in range(len(tp))]
         
-        wf1 = [targets[0][:, i].sum() * 2 * p_c[i] * r_c[i] / (p_c[i] + r_c[i]) if tp[i] > 0 else 0.0 for
+        wf1 = [target[:, i].sum() * 2 * p_c[i] * r_c[i] / (p_c[i] + r_c[i]) if tp[i] > 0 else 0.0 for
                i in range(len(tp))]
                 
         mean_p_c = sum(p_c) / len(p_c)
         mean_r_c = sum(r_c) / len(r_c)
         mean_f_c = sum(f_c) / len(f_c)
-        mean_wf1 = sum(wf1) / targets.sum()
+        mean_wf1 = sum(wf1) / target.sum()
 
         p_o = tp.sum().float() / (tp + fp).sum().float() * 100.0
         r_o = tp.sum().float() / (tp + fn).sum().float() * 100.0
