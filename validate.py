@@ -257,11 +257,11 @@ def validate_multi(val_loader, model, args, logMLFlow = True):
     mAP_score = mAP(torch.cat(targets).numpy(), torch.cat(preds).numpy())
     wf1 = f1_score(torch.cat(targets).numpy().astype(int), torch.cat(preds).numpy().astype(int), average = "weighted")
     print("mAP score:", mAP_score)
-    print("weightedF1 score:", mean_wf1)
+    print("weightedF1 score:", mean_wf1.numpy()[0])
     #mlflow
     if logMLFlow:
         mlflow.log_metric("mAP_test", mAP_score)
-        mlflow.log_metric("wf1_test", mean_wf1[0])
+        mlflow.log_metric("wf1_test", mean_wf1.numpy()[0])
 
     return
 
