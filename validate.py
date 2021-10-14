@@ -155,8 +155,8 @@ def main(data = '/dbfs/datasets/coco/', num_classes = 80, model_name = "tresnet_
         val_dataset, batch_size=args.batch_size, shuffle=False,
         num_workers=args.workers, pin_memory=True)
 
-     mean_wf1.item(), mean_f_c, f_o.item(), mean_p_c, mAP = validate_multi(val_loader, model, args, logMLFlow)
-     return  mean_wf1.item(), mean_f_c, f_o.item(), mean_p_c, mAP
+    mean_wf1, mean_f_c, f_o, mean_p_c, mAP = validate_multi(val_loader, model, args, logMLFlow)
+    return  mean_wf1, mean_f_c, f_o, mean_p_c, mAP
 
 # @torch.cuda.amp.autocast()
 def validate_multi(val_loader, model, args, logMLFlow = True):
