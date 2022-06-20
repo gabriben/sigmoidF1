@@ -10,7 +10,7 @@ import torchvision.transforms as transforms
 from torch.optim import lr_scheduler
 from src.helper_functions.helper_functions import mAP, CocoDetection, CutoutPIL, ModelEma, add_weight_decay
 from src.models import create_model
-from src.loss_functions.losses import AsymmetricLoss, sigmoidF1, macroSoftF1, focalLoss
+from src.loss_functions.losses import AsymmetricLoss, sigmoidF1, macroSoftF1, focalLoss, ResampleLoss
 from randaugment import RandAugment
 from torch.cuda.amp import GradScaler, autocast
 
@@ -241,7 +241,9 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
     elif args.loss_function == "unboundedF1":
         criterion = macroSoftF1()
     elif args.loss_function == "focalLoss":
-        criterion = focalLoss()        
+        criterion = focalLoss()
+    elif args.loss_function == "resampleLoss":
+        criterion = ResampleLoss()
         
     parameters = add_weight_decay(model, weight_decay)
     optimizer = torch.optim.Adam(params=parameters, lr=lr, weight_decay=0)  # true wd, filter_bias_and_bn
