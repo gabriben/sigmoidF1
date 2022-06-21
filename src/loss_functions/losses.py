@@ -316,7 +316,9 @@ class ResampleLoss(nn.Module):
 
         with open("/dbfs/datasets/PASCAL-VOC/VOCasCOCO/class_freq.pkl", 'rb') as f:
             class_freq = pickle.load(f)
-        
+        with open("/dbfs/datasets/PASCAL-VOC/VOCasCOCO/train_num.pkl", 'rb') as f:
+            train_num = pickle.load(f)
+            
         self.class_freq = torch.from_numpy(np.asarray(class_freq)).float().cuda()
         self.num_classes = self.class_freq.shape[0]
         self.train_num = train_num # only used to be divided by class_freq
