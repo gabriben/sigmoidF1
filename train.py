@@ -243,7 +243,11 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
     elif args.loss_function == "focalLoss":
         criterion = focalLoss()
     elif args.loss_function == "resampleLoss":
-        criterion = ResampleLoss()
+        criterion = ResampleLoss(reweight_func='rebalance', loss_weight=1.0,
+                                 focal=dict(focal=True, alpha=0.5, gamma=2),
+                                 logit_reg=dict(init_bias=0.05, neg_scale=5.0),
+                                 map_param=dict(alpha=0.1, beta=10.0, gamma=0.3))
+        # hypers from here: https://github.com/wutong16/DistributionBalancedLoss/blob/a3ecaa9021a920fcce9fdafbd7d83b51bf526af8/configs/voc/LT_resnet50_pfc_DB.py
         
     parameters = add_weight_decay(model, weight_decay)
     optimizer = torch.optim.Adam(params=parameters, lr=lr, weight_decay=0)  # true wd, filter_bias_and_bn
