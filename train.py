@@ -209,9 +209,8 @@ def main( data = '/dbfs/datasets/coco', model_file_name = "tresnet_m_21K", ep = 
         val_dataset, batch_size=args.batch_size, shuffle=False,
         num_workers=args.workers, pin_memory=False)
 
-    return train_loader
     # Actuall Training
-    # train_multi_label_coco(model, train_loader, val_loader, args)
+    train_multi_label_coco(model, train_loader, val_loader, args)
 
 
 def train_multi_label_coco(model, train_loader, val_loader, args):

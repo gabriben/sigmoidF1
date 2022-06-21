@@ -250,6 +250,7 @@ class ASLSingleLabel(nn.Module):
 ## from https://github.com/blessu/BalancedLossNLP/blob/main/Reuters/util_loss.py
 
 import numpy as np
+import pickle
 
 class ResampleLoss(nn.Module):
 
@@ -313,6 +314,9 @@ class ResampleLoss(nn.Module):
         self.CB_beta = CB_loss['CB_beta']
         self.CB_mode = CB_loss['CB_mode']
 
+        with open("/dbfs/datasets/PASCAL-VOC/VOCasCOCO/class_freq.pkl", 'rb') as f:
+            class_freq = pickle.load(f)
+        
         self.class_freq = torch.from_numpy(np.asarray(class_freq)).float().cuda()
         self.num_classes = self.class_freq.shape[0]
         self.train_num = train_num # only used to be divided by class_freq
