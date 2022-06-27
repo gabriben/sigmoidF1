@@ -117,10 +117,10 @@ def main(data = '/dbfs/datasets/coco/', num_classes = 80, model_name = "tresnet_
 
     # parallel
     if torch.cuda.device_count() > 1:
-        # torch.cuda.set_device(0)
+        torch.cuda.set_device(0)
         if not torch.distributed.is_initialized():
             torch.distributed.init_process_group(backend='nccl', init_method='env://')
-        model = torch.nn.parallel.DistributedDataParallel(model) #, device_ids=[0])
+        model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[0])
 
     if "resnet101" not in model_name:
         model.load_state_dict(state, strict=True)
