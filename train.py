@@ -233,7 +233,7 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
     S = args.S
     E = args.E
     if args.loss_function == "ASL":
-        criterion = AsymmetricLoss(gamma_neg=4, gamma_pos=0, clip=0.05, disable_torch_grad_focal_loss=True)
+        criterion = AsymmetricLoss(gamma_neg=4, gamma_pos=0, clip=0.05)
     elif args.loss_function == "sigmoidF1":
         criterion = sigmoidF1(S = S, E = E)
     elif args.loss_function == "crossEntropy":
@@ -241,7 +241,8 @@ def train_multi_label_coco(model, train_loader, val_loader, args):
     elif args.loss_function == "unboundedF1":
         criterion = macroSoftF1()
     elif args.loss_function == "focalLoss":
-        criterion = focalLoss()
+        criterion = AsymmetricLoss(gamma_neg=2, gamma_pos=2, clip=0)
+        # criterion = focalLoss()
     elif args.loss_function == "resampleLoss":
         criterion = ResampleLoss(reweight_func='rebalance', loss_weight=1.0,
                                  focal=dict(focal=True, alpha=0.5, gamma=2),
